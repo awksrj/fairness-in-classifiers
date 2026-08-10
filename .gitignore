@@ -1,0 +1,88 @@
+# =========================
+# Unused / temporary files
+# =========================
+
+unused/
+
+
+# =========================
+# Python
+# =========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.venv/
+venv/
+env/
+.env
+.env.*
+
+
+# =========================
+# Models / ML artifacts
+# =========================
+
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.h5
+*.keras
+
+
+# =========================
+# Generated outputs
+# =========================
+
+outputs/
+results/
+logs/
+checkpoints/
+
+*.log
+
+
+# =========================
+# Jupyter
+# =========================
+
+.ipynb_checkpoints/
+
+
+# =========================
+# IDE / Editor
+# =========================
+
+.vscode/
+.idea/
+
+
+# =========================
+# OS files
+# =========================
+
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# Python tooling
+# =========================
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+
+# =========================
+# Secrets / credentials
+# =========================
+
+*.pem
+*.key
+credentials.json
+secrets.json

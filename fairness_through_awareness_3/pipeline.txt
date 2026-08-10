@@ -1,0 +1,7 @@
+Fairness Through Awarness Pipeline
+
+Training flow
+training_dataset.csv ---> 2d_plot.py ---> plots/
+                     ---> fta_lp.py ---> lp_result.csv ---> 2d_plot.py ---> plots/
+
+            
