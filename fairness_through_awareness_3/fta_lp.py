@@ -7,11 +7,12 @@ from scipy.optimize import linprog
 # ============================================================
 
 CSV_PATH = (
-    "fairness_through_awareness_3/"
+    # "fairness_through_awareness_3/"
     "training_dataset.csv"
 )
 
 # Column names
+
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
 HOBBY_COL = "Hobby"
@@ -23,18 +24,22 @@ ADMISSION_COL = "Admission"
 
 # Smaller value = SAT differences matter more.
 #
-# Example:
+# Examples:
+#
 # SAT_SCALE = 1000
-#   100 SAT points -> distance 0.10
+# 100 SAT points -> distance 0.10
 #
-# SAT_SCALE = 100
-#   100 SAT points -> distance 1.00
+# SAT_SCALE = 600
+# 100 SAT points -> distance 0.167
 #
-# Since probabilities are bounded between 0 and 1,
-# a distance >= 1 places no effective restriction on
-# the probability difference.
+# SAT_SCALE = 500
+# 100 SAT points -> distance 0.20
+#
+# A smaller SAT_SCALE allows FTA to assign larger
+# probability differences to applicants with large
+# SAT differences.
 
-SAT_SCALE = 100.0
+SAT_SCALE = 600.0
 
 # ============================================================
 # LOAD TRAINING DATASET
@@ -87,26 +92,39 @@ print(
 # ============================================================
 # FTA DISTANCE
 #
-# IMPORTANT:
-#
 # Gender is NOT included.
 #
 # Similarity is based only on:
 #   - SAT
 #   - Hobby
 #
-# Smaller SAT_SCALE makes SAT differences more important.
+# d(i,j) =
+#     |SAT_i - SAT_j| / SAT_SCALE
+#     + hobby_difference
+#
+# Same hobby:
+#     hobby_difference = 0
+#
+# Different hobby:
+#     hobby_difference = 1
+#
 # ============================================================
 
 def distance(i, j):
 
+    # --------------------------------------------------------
     # SAT component
+    # --------------------------------------------------------
+
     sat_distance = (
         abs(sat[i] - sat[j])
         / SAT_SCALE
     )
 
+    # --------------------------------------------------------
     # Hobby component
+    # --------------------------------------------------------
+
     hobby_distance = (
         0
         if hobby[i] == hobby[j]
@@ -120,15 +138,24 @@ def distance(i, j):
 # OBJECTIVE FUNCTION
 #
 # For Y = 1:
+#
 #     loss = 1 - p_i
 #
 # For Y = 0:
+#
 #     loss = p_i
 #
 # Ignoring constants:
 #
-# Y = 1 -> coefficient -1
-# Y = 0 -> coefficient +1
+#     Y = 1 -> coefficient -1
+#     Y = 0 -> coefficient +1
+#
+# Therefore the LP tries to:
+#
+#     push positive examples toward 1
+#     push negative examples toward 0
+#
+# while satisfying the FTA fairness constraints.
 # ============================================================
 
 c = np.where(
@@ -144,8 +171,9 @@ c = np.where(
 #
 # becomes:
 #
-# p_i - p_j <= d(i,j)
-# p_j - p_i <= d(i,j)
+#     p_i - p_j <= d(i,j)
+#     p_j - p_i <= d(i,j)
+#
 # ============================================================
 
 A_ub = []
@@ -226,6 +254,12 @@ print(
 
 # ============================================================
 # STORE FTA PROBABILITIES
+#
+# IMPORTANT:
+# No threshold is applied here.
+#
+# The continuous FTA probability is passed directly
+# to the downstream classifier.
 # ============================================================
 
 df["FTA_Probability"] = result.x
@@ -236,7 +270,7 @@ df["FTA_Probability"] = result.x
 
 max_violation = 0.0
 binding_constraints = 0
-total_constraints = 0
+total_pairs = 0
 
 for i in range(n):
 
@@ -257,21 +291,32 @@ for i in range(n):
             violation
         )
 
-        # A constraint is considered binding if
-        # probability difference is approximately
-        # equal to the allowed distance.
+        # A constraint is considered binding if the
+        # probability difference is approximately equal
+        # to the allowed distance.
+
         if abs(
             probability_difference - d
         ) < 1e-7:
 
             binding_constraints += 1
 
-        total_constraints += 1
+        total_pairs += 1
+
+# ============================================================
+# PRINT CONSTRAINT DIAGNOSTICS
+# ============================================================
 
 print("\nFTA constraint diagnostics:")
+
 print(
-    f"Total pairwise constraints: "
-    f"{total_constraints * 2}"
+    f"Total applicant pairs: "
+    f"{total_pairs}"
+)
+
+print(
+    f"Total inequality constraints: "
+    f"{total_pairs * 2}"
 )
 
 print(
@@ -285,126 +330,12 @@ print(
 )
 
 # ============================================================
-# CHOOSE THRESHOLD AFTER OBTAINING FTA PROBABILITIES
+# DISPLAY FTA PROBABILITIES
 #
-# Goal:
-# Make the number of binary accepted applicants as close
-# as possible to the original number of accepted applicants.
+# No FTA_Prediction is generated.
 # ============================================================
 
-probabilities = (
-    df["FTA_Probability"]
-    .to_numpy()
-)
-
-best_threshold = None
-best_accepted = None
-best_difference = float("inf")
-
-# Use all meaningful probability values as candidate
-# thresholds.
-#
-# Also include 0 and 1.
-
-candidate_thresholds = np.unique(
-    np.concatenate([
-        [0.0],
-        probabilities,
-        [1.0]
-    ])
-)
-
-for threshold in candidate_thresholds:
-
-    accepted_count = np.sum(
-        probabilities >= threshold
-    )
-
-    difference = abs(
-        accepted_count - original_accepted
-    )
-
-    if difference < best_difference:
-
-        best_difference = difference
-        best_threshold = threshold
-        best_accepted = accepted_count
-
-# ============================================================
-# ASSIGN BINARY FTA PREDICTION
-# ============================================================
-
-df["FTA_Prediction"] = np.where(
-    df["FTA_Probability"] >= best_threshold,
-    "Yes",
-    "No"
-)
-
-# ============================================================
-# PRINT THRESHOLD AND ACCEPTANCE STATISTICS
-# ============================================================
-
-fta_acceptance_rate = (
-    best_accepted / n
-)
-
-print("\nFTA threshold selection:")
-
-print(
-    f"Selected threshold: "
-    f"{best_threshold:.6f}"
-)
-
-print(
-    f"Original accepted: "
-    f"{original_accepted}/{n} "
-    f"({original_acceptance_rate:.1%})"
-)
-
-print(
-    f"FTA accepted: "
-    f"{best_accepted}/{n} "
-    f"({fta_acceptance_rate:.1%})"
-)
-
-print(
-    f"Difference in accepted applicants: "
-    f"{best_accepted - original_accepted:+d}"
-)
-
-# ============================================================
-# GROUP-LEVEL STATISTICS
-# ============================================================
-
-print("\nFTA results by gender:")
-
-for gender in ["M", "F"]:
-
-    group = df[
-        df[GENDER_COL] == gender
-    ]
-
-    original_yes = (
-        group["Y"].sum()
-    )
-
-    fta_yes = (
-        group["FTA_Prediction"] == "Yes"
-    ).sum()
-
-    group_size = len(group)
-
-    print(
-        f"  {gender}: "
-        f"Original = {int(original_yes)}/{group_size}, "
-        f"FTA = {fta_yes}/{group_size}"
-    )
-
-# ============================================================
-# DISPLAY RESULTS
-# ============================================================
-
-print("\nFTA results:\n")
+print("\nFTA probabilities:\n")
 
 print(
     df[
@@ -414,22 +345,44 @@ print(
             SAT_COL,
             HOBBY_COL,
             ADMISSION_COL,
-            "FTA_Probability",
-            "FTA_Prediction"
+            "FTA_Probability"
         ]
     ].to_string(index=False)
 )
 
 # ============================================================
 # SAVE RESULT
+#
+# The output contains:
+#
+#   ID
+#   Gender
+#   SAT
+#   Hobby
+#   Admission
+#   FTA_Probability
+#
+# GenderNum, HobbyNum, and Y are internal columns and are
+# removed before saving.
 # ============================================================
 
 output_path = (
-    "fairness_through_awareness_3/"
+    # "fairness_through_awareness_3/"
     "lp_result.csv"
 )
 
-df.to_csv(
+output_df = df[
+    [
+        "ID",
+        GENDER_COL,
+        SAT_COL,
+        HOBBY_COL,
+        ADMISSION_COL,
+        "FTA_Probability"
+    ]
+].copy()
+
+output_df.to_csv(
     output_path,
     index=False
 )
