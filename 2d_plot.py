@@ -7,7 +7,7 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "fairness_through_awareness_3/lp_result.csv"
+CSV_PATH = "fairness_through_awareness_3/fta_evaluation_result.csv"
 
 # Column names
 GENDER_COL = "Gender"
