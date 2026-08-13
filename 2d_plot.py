@@ -7,13 +7,13 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "fairness_through_awareness_3/fta_evaluation_result.csv"
+CSV_PATH = "causal/3-repaired_data_discrete.csv"
 
 # Column names
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
 HOBBY_COL = "Hobby"
-ADMISSION_COL = "FTA_Prediction"  # use FTA_Prediction for the FTA results, # or Admission for the training dataset
+ADMISSION_COL = "Admission"  # use FTA_Prediction for the FTA results, # or Admission for the training dataset
 
 # Select which hobby to visualize
 SELECTED_HOBBY = "Soccer"
