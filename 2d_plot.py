@@ -138,66 +138,66 @@ female_boundary = boundaries["F"]
 
 if male_boundary is not None and female_boundary is not None:
 
-    # Equation:
-    # SAT = slope * Gender + intercept
-    #
-    # Gender:
-    # M = 0
-    # F = 1
-    #
-    # Therefore:
-    # intercept = Male boundary
-    # slope = Female boundary - Male boundary
+   # Equation:
+   # SAT = slope * Gender + intercept
+   #
+   # Gender:
+   # M = 0
+   # F = 1
+   #
+   # Therefore:
+   # intercept = Male boundary
+   # slope = Female boundary - Male boundary
 
-    slope = female_boundary - male_boundary
-    intercept = male_boundary
+   slope = female_boundary - male_boundary
+   intercept = male_boundary
 
 else:
-    slope = None
-    intercept = None
-
+   slope = None
+   intercept = None
+#
 # ============================================================
 # OUTPUT DECISION BOUNDARY STATS
 # ============================================================
-
+#
 print()
 print(f"{SELECTED_HOBBY}:")
 print()
 
 if male_boundary is not None:
-    print(
-        f"  Male boundary:   "
-        f"{male_boundary:.1f} SAT"
-    )
+   print(
+       f"  Male boundary:   "
+       f"{male_boundary:.1f} SAT"
+   )
 else:
-    print(
-        "  Male boundary:   "
-        "N/A"
-    )
+   print(
+       "  Male boundary:   "
+       "N/A"
+   )
 
 if female_boundary is not None:
-    print(
-        f"  Female boundary: "
-        f"{female_boundary:.1f} SAT"
-    )
+   print(
+       f"  Female boundary: "
+       f"{female_boundary:.1f} SAT"
+   )
 else:
-    print(
-        "  Female boundary: N/A"
-    )
+   print(
+       "  Female boundary: N/A"
+   )
 
 if slope is not None:
-    print()
-    print(
-        f"  Boundary equation: "
-        f"SAT = {slope:.1f} * Gender + "
-        f"{intercept:.1f}"
-    )
+   print()
+   print(
+       f"  Boundary equation: "
+       f"SAT = {slope:.1f} * Gender + "
+       f"{intercept:.1f}"
+   )
 
-    print()
-    print(
-        f"  Gender gap / slope: "
-        f"{abs(slope):.1f} SAT points"
-    )
+   print()
+   print(
+       f"  Gender gap / slope: "
+       f"{abs(slope):.1f} SAT points"
+   )
 
 print()
 
@@ -233,19 +233,19 @@ for admission, color in admission_colors.items():
 
 if male_boundary is not None:
 
-    plt.plot(
-        [
-            0 - COLUMN_HALF_WIDTH,
-            0 + COLUMN_HALF_WIDTH
-        ],
-        [
-            male_boundary,
-            male_boundary
-        ],
-        color=BOUNDARY_COLOR,
-        linestyle=BOUNDARY_LINE_STYLE,
-        linewidth=BOUNDARY_LINE_WIDTH
-    )
+   plt.plot(
+       [
+           0 - COLUMN_HALF_WIDTH,
+           0 + COLUMN_HALF_WIDTH
+       ],
+       [
+           male_boundary,
+           male_boundary
+       ],
+       color=BOUNDARY_COLOR,
+       linestyle=BOUNDARY_LINE_STYLE,
+       linewidth=BOUNDARY_LINE_WIDTH
+   )
 
 # ============================================================
 # DRAW FEMALE DECISION BOUNDARY
@@ -253,19 +253,19 @@ if male_boundary is not None:
 
 if female_boundary is not None:
 
-    plt.plot(
-        [
-            1 - COLUMN_HALF_WIDTH,
-            1 + COLUMN_HALF_WIDTH
-        ],
-        [
-            female_boundary,
-            female_boundary
-        ],
-        color=BOUNDARY_COLOR,
-        linestyle=BOUNDARY_LINE_STYLE,
-        linewidth=BOUNDARY_LINE_WIDTH
-    )
+   plt.plot(
+       [
+           1 - COLUMN_HALF_WIDTH,
+           1 + COLUMN_HALF_WIDTH
+       ],
+       [
+           female_boundary,
+           female_boundary
+       ],
+       color=BOUNDARY_COLOR,
+       linestyle=BOUNDARY_LINE_STYLE,
+       linewidth=BOUNDARY_LINE_WIDTH
+   )
 
 # ============================================================
 # AXES

@@ -4,4 +4,8 @@ Training flow
 training_dataset.csv ---> 2d_plot.py ---> plots/
                      ---> fta_lp.py ---> lp_result.csv ---> 2d_plot.py ---> plots/
 
-            
+Classifier flow
+lp_result.csv ---> fta_classifier.py ---> fta_model.pkl
+
+Evaluation flow
+evaluation_dataset.csv + fta_model.pkl  --->  fta_evaluation.py  ---> fta_evaluation_result.csv         
