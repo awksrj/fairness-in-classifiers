@@ -4,7 +4,7 @@ import pandas as pd
 # CONFIGURATION — change these for different datasets
 # ============================================================
 
-CSV_FILE = "fairness_through_awareness_redo/training_dataset_outliner.csv"
+CSV_FILE = "causal/1-training_data.csv"
 # CSV_FILE = "fairness_through_awareness_redo/fta_training_result.csv"
 
 ID_COL = "ID"

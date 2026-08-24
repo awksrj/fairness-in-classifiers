@@ -7,7 +7,7 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "causal/3-repaired_data_discrete.csv"
+CSV_PATH = "causal-2/3-repaired_data_discrete.csv"
 
 # Column names
 GENDER_COL = "Gender"
