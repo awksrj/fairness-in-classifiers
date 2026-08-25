@@ -7,7 +7,7 @@ from matplotlib.lines import Line2D
 # Configuration
 # ============================================================
 
-CSV_FILE = "causal-2/1-training_data.csv"
+CSV_FILE = "causal-2/3-repaired_data.csv"
 
 # ============================================================
 # Load dataset
