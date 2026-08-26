@@ -1,5 +1,4 @@
 import pandas as pd
-from itertools import product
 from pathlib import Path
 
 
@@ -18,146 +17,184 @@ QUAL_COL = "Qualification"
 DEPT_COL = "Department"
 ADMISSION_COL = "Admission"
 
-# CI:
-#     Admission ⟂ Gender | Department, Qualification
-#
-# Equivalent saturated MVD:
-#     (Department, Qualification) ->-> Gender
+TRAINING_COLUMNS = [
+    ID_COL,
+    GENDER_COL,
+    QUAL_COL,
+    DEPT_COL,
+    ADMISSION_COL
+]
 
 
 # ============================================================
-# HELPER: COMPLETE A BLOCK
+# REPAIR ONE (DEPARTMENT, QUALIFICATION) BLOCK
 # ============================================================
 
 def repair_block(block):
     """
     Repair one (Department, Qualification) block.
 
-    For a fixed (D, Q), the MVD requires:
+    Target CI:
 
-        Gender <-> Admission
+        Admission ⟂ Gender | Department, Qualification
 
-    to be independent.
+    Equivalent saturated MVD:
 
-    Because this dataset is represented as a bag, duplicate
-    occurrences matter.
+        (Department, Qualification) ->-> Gender
+
+    For a fixed (Department, Qualification), the Gender and
+    Admission values must satisfy the MVD.
+
+    Because Capuchin works with a BAG, duplicate occurrences
+    matter.
 
     Example:
 
-        Male   Yes = 4
-        Female No  = 10
+        Male, Yes    x4
+        Female, No   x10
 
-    A pure insertion repair requires:
+    Possible insertion repair:
 
-        Male   No  = 4
-        Female Yes = 10
+        Male, No     x4
+        Female, Yes  x10
 
-    = 14 insertions.
+    Cost = 14.
 
-    But deleting the 4 Male/Yes occurrences costs only 4,
-    so deletion is the minimal repair.
+    But deleting the 4 Male/Yes tuples costs only 4.
 
-    We enumerate possible target count tables and select the
-    one with minimum symmetric-difference distance from the
-    original block.
+    Therefore deletion is the minimal repair.
     """
 
     # --------------------------------------------------------
-    # Count occurrences
+    # Unique values in this block
     # --------------------------------------------------------
 
-    genders = sorted(block[GENDER_COL].unique())
-    admissions = sorted(block[ADMISSION_COL].unique())
+    genders = sorted(
+        block[GENDER_COL].unique()
+    )
 
-    # For this experiment we expect exactly:
-    # Gender = Male, Female
-    # Admission = Yes, No
-
-    if len(genders) == 0 or len(admissions) == 0:
-        return block.copy(), [], []
-
-    # Count original bag
-    counts = {}
-
-    for g in genders:
-        for a in admissions:
-            counts[(g, a)] = len(
-                block[
-                    (block[GENDER_COL] == g) &
-                    (block[ADMISSION_COL] == a)
-                ]
-            )
-
-    # --------------------------------------------------------
-    # MVD condition
-    #
-    # For two genders and two admission values, independence
-    # means the 2x2 table must have rank 1:
-    #
-    #   n(M,Y) * n(F,N)
-    #       =
-    #   n(M,N) * n(F,Y)
-    #
-    # We find the minimum symmetric-difference repair.
-    # --------------------------------------------------------
+    admissions = sorted(
+        block[ADMISSION_COL].unique()
+    )
 
     # If there is only one gender or one admission value,
     # the MVD is automatically satisfied.
     if len(genders) < 2 or len(admissions) < 2:
-        return block.copy(), [], []
+        operations = []
+
+        for _, row in block.iterrows():
+            operations.append(
+                (row.copy(), "Keep")
+            )
+
+        return block.copy(), operations
+
+    # --------------------------------------------------------
+    # This experiment has two genders and two admission values
+    # --------------------------------------------------------
 
     g1, g2 = genders[0], genders[1]
     a1, a2 = admissions[0], admissions[1]
+
+    # --------------------------------------------------------
+    # Original multiplicities
+    # --------------------------------------------------------
+
+    counts = {}
+
+    for g in genders:
+        for a in admissions:
+
+            counts[(g, a)] = len(
+                block[
+                    (block[GENDER_COL] == g)
+                    &
+                    (block[ADMISSION_COL] == a)
+                ]
+            )
 
     n11 = counts[(g1, a1)]
     n12 = counts[(g1, a2)]
     n21 = counts[(g2, a1)]
     n22 = counts[(g2, a2)]
 
-    # Already satisfies independence?
+    # --------------------------------------------------------
+    # MVD / independence condition
+    #
+    # For a 2x2 table:
+    #
+    #     n11 * n22 = n12 * n21
+    #
+    # --------------------------------------------------------
+
     if n11 * n22 == n12 * n21:
-        return block.copy(), [], []
+
+        operations = []
+
+        for _, row in block.iterrows():
+            operations.append(
+                (row.copy(), "Keep")
+            )
+
+        return block.copy(), operations
 
     # --------------------------------------------------------
-    # Search possible repaired count tables
+    # Search for minimum symmetric-difference repair
     #
-    # We need:
+    # We search possible target multiplicities:
     #
-    #       x11 * x22 = x12 * x21
+    #     x11, x12, x21, x22
     #
-    # The original number of tuples in this block is small
-    # enough for exhaustive search.
+    # satisfying:
     #
-    # We search target counts from 0 to a safe upper bound.
+    #     x11*x22 = x12*x21
+    #
+    # Cost:
+    #
+    #     Σ |xij - nij|
+    #
+    # This corresponds to bag symmetric difference.
     # --------------------------------------------------------
 
     original_total = len(block)
 
-    # Any minimal repair never needs an arbitrarily large number
-    # of tuples. We only need to consider counts up to the
-    # original total plus the largest original cell.
-    max_count = original_total + max(
-        n11, n12, n21, n22
+    max_original_cell = max(
+        n11,
+        n12,
+        n21,
+        n22
+    )
+
+    # A safe finite search range for this small experiment.
+    max_count = (
+        original_total
+        + max_original_cell
     )
 
     best_cost = float("inf")
     best_counts = None
 
+    # --------------------------------------------------------
+    # Exhaustive search
+    # --------------------------------------------------------
+
     for x11 in range(max_count + 1):
+
         for x12 in range(max_count + 1):
+
             for x21 in range(max_count + 1):
 
-                # Determine x22 from the independence condition.
+                # --------------------------------------------
+                # Case x11 > 0
                 #
                 # x11*x22 = x12*x21
                 #
-                # If x11 != 0, x22 must be exactly:
+                # Therefore:
                 #
-                # x12*x21 / x11
-                #
-                # Otherwise we handle the zero case separately.
+                # x22 = x12*x21 / x11
+                # --------------------------------------------
 
-                if x11 != 0:
+                if x11 > 0:
 
                     numerator = x12 * x21
 
@@ -173,125 +210,143 @@ def repair_block(block):
                         (g1, a1): x11,
                         (g1, a2): x12,
                         (g2, a1): x21,
-                        (g2, a2): x22,
+                        (g2, a2): x22
                     }
+
+                    cost = sum(
+                        abs(
+                            target[key]
+                            - counts[key]
+                        )
+                        for key in target
+                    )
+
+                    if cost < best_cost:
+
+                        best_cost = cost
+                        best_counts = target
+
+                # --------------------------------------------
+                # Case x11 = 0
+                #
+                # Then:
+                #
+                #     0*x22 = x12*x21
+                #
+                # Therefore:
+                #
+                #     x12 = 0
+                #
+                # OR
+                #
+                #     x21 = 0
+                # --------------------------------------------
 
                 else:
 
-                    # If x11 = 0, then:
-                    #
-                    # 0 * x22 = x12 * x21
-                    #
-                    # Therefore:
-                    #
-                    # x12 = 0 OR x21 = 0
-
+                    # ----------------------------------------
                     # Case x12 = 0
+                    # ----------------------------------------
+
                     if x12 == 0:
 
-                        for x22 in range(max_count + 1):
+                        for x22 in range(
+                            max_count + 1
+                        ):
 
                             target = {
                                 (g1, a1): 0,
                                 (g1, a2): 0,
                                 (g2, a1): x21,
-                                (g2, a2): x22,
+                                (g2, a2): x22
                             }
 
                             cost = sum(
                                 abs(
-                                    target[key] - counts[key]
+                                    target[key]
+                                    - counts[key]
                                 )
                                 for key in target
                             )
 
                             if cost < best_cost:
+
                                 best_cost = cost
                                 best_counts = target
 
+                    # ----------------------------------------
                     # Case x21 = 0
+                    # ----------------------------------------
+
                     if x21 == 0:
 
-                        for x22 in range(max_count + 1):
+                        for x22 in range(
+                            max_count + 1
+                        ):
 
                             target = {
                                 (g1, a1): 0,
                                 (g1, a2): x12,
                                 (g2, a1): 0,
-                                (g2, a2): x22,
+                                (g2, a2): x22
                             }
 
                             cost = sum(
                                 abs(
-                                    target[key] - counts[key]
+                                    target[key]
+                                    - counts[key]
                                 )
                                 for key in target
                             )
 
                             if cost < best_cost:
+
                                 best_cost = cost
                                 best_counts = target
 
-                    continue
-
-                # ------------------------------------------------
-                # Symmetric difference distance
-                #
-                # For each cell:
-                #
-                # old = original multiplicity
-                # new = repaired multiplicity
-                #
-                # |new-old|
-                #
-                # is the number of insertions/deletions.
-                # ------------------------------------------------
-
-                cost = sum(
-                    abs(target[key] - counts[key])
-                    for key in target
-                )
-
-                if cost < best_cost:
-                    best_cost = cost
-                    best_counts = target
-
     # --------------------------------------------------------
-    # Construct repaired block
+    # Safety check
     # --------------------------------------------------------
 
-    repaired_rows = []
+    if best_counts is None:
+        raise RuntimeError(
+            "Could not find an MVD repair."
+        )
+
+    # --------------------------------------------------------
+    # Construct operations
+    #
+    # For each cell:
+    #
+    # original_count
+    # target_count
+    #
+    # target < original:
+    #     Keep target rows
+    #     Delete remaining rows
+    #
+    # target > original:
+    #     Keep all original rows
+    #     Insert additional rows
+    # --------------------------------------------------------
 
     operations = []
 
-    # Keep original rows according to the target multiplicity.
-    #
-    # If target < original:
-    #   keep target rows
-    #   delete remaining rows
-    #
-    # If target >= original:
-    #   keep all original rows
-    #   insert additional rows
-    # --------------------------------------------------------
-
-    next_id = None
-
-    # IDs are handled globally later.
-    # Here we use None for inserted IDs.
-
-    for key, original_count in counts.items():
+    for key in counts:
 
         gender, admission = key
+
+        original_count = counts[key]
         target_count = best_counts[key]
 
         matching_rows = block[
-            (block[GENDER_COL] == gender) &
+            (block[GENDER_COL] == gender)
+            &
             (block[ADMISSION_COL] == admission)
         ].copy()
 
         # ----------------------------------------------------
-        # KEEP existing rows
+        # KEEP
         # ----------------------------------------------------
 
         keep_count = min(
@@ -299,10 +354,11 @@ def repair_block(block):
             target_count
         )
 
-        keep_rows = matching_rows.iloc[:keep_count]
+        keep_rows = matching_rows.iloc[
+            :keep_count
+        ]
 
         for _, row in keep_rows.iterrows():
-            repaired_rows.append(row.copy())
 
             operations.append(
                 (
@@ -312,157 +368,227 @@ def repair_block(block):
             )
 
         # ----------------------------------------------------
-        # DELETE excess original rows
+        # DELETE
         # ----------------------------------------------------
 
-        delete_count = max(
-            0,
-            original_count - target_count
-        )
+        if target_count < original_count:
 
-        delete_rows = matching_rows.iloc[
-            keep_count:
-        ]
+            delete_rows = matching_rows.iloc[
+                keep_count:
+            ]
 
-        for _, row in delete_rows.iterrows():
+            for _, row in delete_rows.iterrows():
 
-            operations.append(
-                (
-                    row.copy(),
-                    "Delete"
+                operations.append(
+                    (
+                        row.copy(),
+                        "Delete"
+                    )
                 )
+
+        # ----------------------------------------------------
+        # INSERT
+        # ----------------------------------------------------
+
+        if target_count > original_count:
+
+            insert_count = (
+                target_count
+                - original_count
             )
 
-        # ----------------------------------------------------
-        # INSERT missing rows
-        # ----------------------------------------------------
+            for _ in range(insert_count):
 
-        insert_count = max(
-            0,
-            target_count - original_count
-        )
+                new_row = pd.Series({
+                    ID_COL: None,
+                    GENDER_COL: gender,
+                    QUAL_COL: block.iloc[0][QUAL_COL],
+                    DEPT_COL: block.iloc[0][DEPT_COL],
+                    ADMISSION_COL: admission
+                })
 
-        for _ in range(insert_count):
-
-            new_row = {
-                ID_COL: None,
-                GENDER_COL: gender,
-                QUAL_COL: block.iloc[0][QUAL_COL],
-                DEPT_COL: block.iloc[0][DEPT_COL],
-                ADMISSION_COL: admission,
-            }
-
-            new_row = pd.Series(new_row)
-
-            repaired_rows.append(new_row)
-
-            operations.append(
-                (
-                    new_row,
-                    "Insert"
+                operations.append(
+                    (
+                        new_row,
+                        "Insert"
+                    )
                 )
-            )
 
-    repaired_block = pd.DataFrame(repaired_rows)
-
-    return repaired_block, operations, best_counts
+    return None, operations
 
 
 # ============================================================
-# MAIN REPAIR
+# MAIN CAPUCHIN REPAIR
 # ============================================================
 
 def capuchin_repair():
 
     # --------------------------------------------------------
-    # Read training data
+    # READ INPUT
     # --------------------------------------------------------
 
-    df = pd.read_csv(INPUT_FILE)
+    df = pd.read_csv(
+        INPUT_FILE
+    )
 
-    required_columns = [
-        ID_COL,
-        GENDER_COL,
-        QUAL_COL,
-        DEPT_COL,
-        ADMISSION_COL
+    # --------------------------------------------------------
+    # Validate columns
+    # --------------------------------------------------------
+
+    missing_columns = [
+        column
+        for column in TRAINING_COLUMNS
+        if column not in df.columns
     ]
 
-    missing = [
-        c for c in required_columns
-        if c not in df.columns
-    ]
+    if missing_columns:
 
-    if missing:
         raise ValueError(
-            f"Missing columns: {missing}"
+            "Training dataset is missing columns: "
+            + str(missing_columns)
         )
 
-    print("=" * 60)
-    print("CAPUCHIN BAG-BASED MVD REPAIR")
-    print("=" * 60)
+    # --------------------------------------------------------
+    # Make sure ID is numeric
+    # --------------------------------------------------------
 
-    print(f"Original rows: {len(df)}")
+    df[ID_COL] = pd.to_numeric(
+        df[ID_COL]
+    )
 
     # --------------------------------------------------------
-    # Track operations for ORIGINAL rows
+    # Starting ID for inserted tuples
+    # --------------------------------------------------------
+
+    next_id = (
+        int(df[ID_COL].max())
+        + 1
+    )
+
+    # --------------------------------------------------------
+    # Store ALL operations
     # --------------------------------------------------------
 
     operation_records = []
 
-    # Repaired dataset rows
-    repaired_rows = []
+    # --------------------------------------------------------
+    # Store only Keep + Insert
+    #
+    # This becomes repaired-data.csv
+    # --------------------------------------------------------
 
-    # New IDs start after the largest original ID
-    max_id = pd.to_numeric(
-        df[ID_COL],
-        errors="coerce"
-    ).max()
-
-    if pd.isna(max_id):
-        max_id = len(df)
-
-    next_id = int(max_id) + 1
+    repaired_records = []
 
     # --------------------------------------------------------
-    # Repair each (Department, Qualification) block
+    # Statistics
+    # --------------------------------------------------------
+
+    total_keep = 0
+    total_delete = 0
+    total_insert = 0
+
+    # --------------------------------------------------------
+    # Process each (Department, Qualification) block
     # --------------------------------------------------------
 
     grouped = df.groupby(
-        [DEPT_COL, QUAL_COL],
+        [
+            DEPT_COL,
+            QUAL_COL
+        ],
         sort=False
     )
 
-    for (department, qualification), block in grouped:
+    print()
+    print("=" * 70)
+    print("CAPUCHIN BAG-BASED MVD REPAIR")
+    print("=" * 70)
 
-        print()
+    print(
+        f"Input dataset: {INPUT_FILE}"
+    )
+
+    print(
+        f"Original rows: {len(df)}"
+    )
+
+    print()
+
+    for (
+        department,
+        qualification
+    ), block in grouped:
+
         print(
-            f"Block: Department={department}, "
-            f"Qualification={qualification}"
+            "-" * 70
         )
 
         print(
-            block[
-                [GENDER_COL, ADMISSION_COL]
-            ].value_counts()
+            f"Department = {department}, "
+            f"Qualification = {qualification}"
         )
 
-        repaired_block, operations, best_counts = repair_block(
+        # ----------------------------------------------------
+        # Show original block
+        # ----------------------------------------------------
+
+        original_counts = (
+            block
+            .groupby(
+                [
+                    GENDER_COL,
+                    ADMISSION_COL
+                ]
+            )
+            .size()
+            .to_dict()
+        )
+
+        print(
+            "Original counts:"
+        )
+
+        for key, count in original_counts.items():
+
+            print(
+                f"    {key}: {count}"
+            )
+
+        # ----------------------------------------------------
+        # Repair block
+        # ----------------------------------------------------
+
+        _, operations = repair_block(
             block
         )
 
         # ----------------------------------------------------
-        # Assign IDs to inserted rows
+        # Process operations
         # ----------------------------------------------------
+
+        block_keep = 0
+        block_delete = 0
+        block_insert = 0
 
         for row, operation in operations:
 
             row = row.copy()
 
+            # -----------------------------------------------
+            # Assign new ID to inserted tuples
+            # -----------------------------------------------
+
             if operation == "Insert":
 
                 row[ID_COL] = next_id
+
                 next_id += 1
+
+            # -----------------------------------------------
+            # Record in repair_operations.csv
+            #
+            # ALL training columns + Operation
+            # -----------------------------------------------
 
             operation_records.append({
                 ID_COL: row[ID_COL],
@@ -473,43 +599,112 @@ def capuchin_repair():
                 "Operation": operation
             })
 
-            if operation in ["Keep", "Insert"]:
-                repaired_rows.append(row)
+            # -----------------------------------------------
+            # Record Keep + Insert in repaired dataset
+            #
+            # NO Operation column
+            # -----------------------------------------------
+
+            if operation in [
+                "Keep",
+                "Insert"
+            ]:
+
+                repaired_records.append({
+                    ID_COL: row[ID_COL],
+                    GENDER_COL: row[GENDER_COL],
+                    QUAL_COL: row[QUAL_COL],
+                    DEPT_COL: row[DEPT_COL],
+                    ADMISSION_COL: row[ADMISSION_COL]
+                })
+
+            # -----------------------------------------------
+            # Statistics
+            # -----------------------------------------------
+
+            if operation == "Keep":
+
+                block_keep += 1
+                total_keep += 1
+
+            elif operation == "Delete":
+
+                block_delete += 1
+                total_delete += 1
+
+            elif operation == "Insert":
+
+                block_insert += 1
+                total_insert += 1
 
         # ----------------------------------------------------
-        # Print repair summary
+        # Repaired counts for this block
         # ----------------------------------------------------
 
-        counts = block.groupby(
-            [GENDER_COL, ADMISSION_COL]
-        ).size().to_dict()
+        repaired_block_records = [
+            row
+            for row in repaired_records
+            if (
+                row[DEPT_COL] == department
+                and
+                row[QUAL_COL] == qualification
+            )
+        ]
 
-        print("Original counts:")
-        print(counts)
-
-        print("Repaired counts:")
-        print(best_counts)
-
-        deletes = sum(
-            1
-            for _, op in operations
-            if op == "Delete"
+        repaired_block_df = pd.DataFrame(
+            repaired_block_records
         )
 
-        inserts = sum(
-            1
-            for _, op in operations
-            if op == "Insert"
-        )
+        if len(repaired_block_df) > 0:
+
+            repaired_counts = (
+                repaired_block_df
+                .groupby(
+                    [
+                        GENDER_COL,
+                        ADMISSION_COL
+                    ]
+                )
+                .size()
+                .to_dict()
+            )
+
+        else:
+
+            repaired_counts = {}
+
+        # ----------------------------------------------------
+        # Print repair
+        # ----------------------------------------------------
 
         print(
-            f"Repair: {deletes} deletion(s), "
-            f"{inserts} insertion(s)"
+            f"Repair:"
+            f" {block_keep} Keep,"
+            f" {block_delete} Delete,"
+            f" {block_insert} Insert"
         )
 
-    # --------------------------------------------------------
-    # Create operation dataframe
-    # --------------------------------------------------------
+        if block_delete > 0 or block_insert > 0:
+
+            print(
+                "  >>> VIOLATION REPAIRED"
+            )
+
+        print(
+            "Repaired counts:"
+        )
+
+        for key, count in repaired_counts.items():
+
+            print(
+                f"    {key}: {count}"
+            )
+
+    # ========================================================
+    # CREATE repair_operations.csv
+    #
+    # ALL TRAINING COLUMNS + Operation
+    # ========================================================
 
     operations_df = pd.DataFrame(
         operation_records,
@@ -523,12 +718,16 @@ def capuchin_repair():
         ]
     )
 
-    # --------------------------------------------------------
-    # Create repaired dataframe
-    # --------------------------------------------------------
+    # ========================================================
+    # CREATE repaired-data.csv
+    #
+    # ONLY TRAINING COLUMNS
+    #
+    # Only Keep + Insert rows are included.
+    # ========================================================
 
     repaired_df = pd.DataFrame(
-        repaired_rows,
+        repaired_records,
         columns=[
             ID_COL,
             GENDER_COL,
@@ -538,83 +737,128 @@ def capuchin_repair():
         ]
     )
 
-    # Make IDs integers
-    operations_df[ID_COL] = pd.to_numeric(
-        operations_df[ID_COL]
-    ).astype(int)
-
-    repaired_df[ID_COL] = pd.to_numeric(
-        repaired_df[ID_COL]
-    ).astype(int)
-
     # --------------------------------------------------------
-    # Make output directories
+    # Ensure IDs are integers
     # --------------------------------------------------------
 
-    Path(OPERATIONS_FILE).parent.mkdir(
+    operations_df[ID_COL] = (
+        pd.to_numeric(
+            operations_df[ID_COL]
+        ).astype(int)
+    )
+
+    repaired_df[ID_COL] = (
+        pd.to_numeric(
+            repaired_df[ID_COL]
+        ).astype(int)
+    )
+
+    # ========================================================
+    # CREATE OUTPUT DIRECTORY
+    # ========================================================
+
+    Path("causal-2").mkdir(
         parents=True,
         exist_ok=True
     )
 
-    Path(REPAIRED_FILE).parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    # --------------------------------------------------------
-    # Save
-    # --------------------------------------------------------
+    # ========================================================
+    # SAVE FILE 1
+    #
+    # causal-2/3-repair_operations.csv
+    # ========================================================
 
     operations_df.to_csv(
         OPERATIONS_FILE,
         index=False
     )
 
+    # ========================================================
+    # SAVE FILE 2
+    #
+    # causal-2/3-repaired-data.csv
+    # ========================================================
+
     repaired_df.to_csv(
         REPAIRED_FILE,
         index=False
     )
 
-    # --------------------------------------------------------
-    # Final statistics
-    # --------------------------------------------------------
+    # ========================================================
+    # FINAL SUMMARY
+    # ========================================================
 
     print()
-    print("=" * 60)
+    print("=" * 70)
     print("REPAIR COMPLETE")
-    print("=" * 60)
+    print("=" * 70)
 
     print(
-        f"Original rows: {len(df)}"
+        f"Original rows : {len(df)}"
     )
 
     print(
-        "Kept:",
-        (operations_df["Operation"] == "Keep").sum()
+        f"Keep          : {total_keep}"
     )
 
     print(
-        "Deleted:",
-        (operations_df["Operation"] == "Delete").sum()
+        f"Delete        : {total_delete}"
     )
 
     print(
-        "Inserted:",
-        (operations_df["Operation"] == "Insert").sum()
+        f"Insert        : {total_insert}"
     )
 
     print(
-        f"Repaired rows: {len(repaired_df)}"
+        f"Repaired rows : {len(repaired_df)}"
+    )
+
+    print()
+
+    print(
+        "Operations file:"
+    )
+
+    print(
+        f"  {OPERATIONS_FILE}"
+    )
+
+    print()
+
+    print(
+        "Repaired dataset:"
+    )
+
+    print(
+        f"  {REPAIRED_FILE}"
     )
 
     print()
     print(
-        f"Operations file: {OPERATIONS_FILE}"
+        "Output columns:"
     )
 
     print(
-        f"Repaired data:   {REPAIRED_FILE}"
+        "  repair_operations.csv:"
     )
+
+    print(
+        "  ",
+        list(operations_df.columns)
+    )
+
+    print()
+
+    print(
+        "  repaired-data.csv:"
+    )
+
+    print(
+        "  ",
+        list(repaired_df.columns)
+    )
+
+    print("=" * 70)
 
 
 # ============================================================
@@ -622,4 +866,5 @@ def capuchin_repair():
 # ============================================================
 
 if __name__ == "__main__":
+
     capuchin_repair()
