@@ -6,8 +6,10 @@ from matplotlib.lines import Line2D
 # ============================================================
 # Configuration
 # ============================================================
+# CSV_FILE = "causal-2/1-training_data.csv"
+# CSV_FILE = "causal-2/3-repaired_data.csv"
+CSV_FILE = "causal-2/8-evaluation_result.csv"
 
-CSV_FILE = "causal-2/3-repaired_data.csv"
 
 # ============================================================
 # Load dataset
@@ -40,7 +42,9 @@ qualification_map = {
 
 df["Gender_num"] = df["Gender"].map(gender_map)
 df["Department_num"] = df["Department"].map(department_map)
-df["Qualification_num"] = df["Qualification"].map(qualification_map)
+df["Qualification_num"] = df["Qualification"].map(
+    qualification_map
+)
 
 # ============================================================
 # Add jitter
@@ -78,21 +82,34 @@ colors = df["Admission"].map({
 
 def get_boundary(group):
 
-    admitted = group[group["Admission"] == "Yes"]
-    rejected = group[group["Admission"] == "No"]
+    admitted = group[
+        group["Admission"] == "Yes"
+    ]
+
+    rejected = group[
+        group["Admission"] == "No"
+    ]
 
     # Everyone admitted
     if len(rejected) == 0:
-        return 1.0   # Q4
+        return 0.5
 
     # Everyone rejected
     if len(admitted) == 0:
-        return 4.0   # Q1
+        return 4.5
 
-    lowest_admitted = admitted["Qualification_num"].min()
-    highest_rejected = rejected["Qualification_num"].max()
+    lowest_admitted = (
+        admitted["Qualification_num"].min()
+    )
 
-    return (lowest_admitted + highest_rejected) / 2
+    highest_rejected = (
+        rejected["Qualification_num"].max()
+    )
+
+    return (
+        lowest_admitted
+        + highest_rejected
+    ) / 2
 
 
 # ============================================================
@@ -106,19 +123,78 @@ for department in ["A", "B"]:
     for gender in ["Male", "Female"]:
 
         group = df[
-            (df["Department"] == department) &
+            (df["Department"] == department)
+            &
             (df["Gender"] == gender)
         ]
 
-        boundaries[(department, gender)] = get_boundary(group)
+        boundaries[
+            (department, gender)
+        ] = get_boundary(group)
 
 
 # ============================================================
-# Create 3D plot
+# PRINT DECISION BOUNDARY DATA
+# ============================================================
+
+print()
+print("=" * 60)
+print("DECISION BOUNDARIES")
+print("=" * 60)
+
+for department in ["A", "B"]:
+
+    male_boundary = boundaries[
+        (department, "Male")
+    ]
+
+    female_boundary = boundaries[
+        (department, "Female")
+    ]
+
+    slope = (
+        female_boundary
+        - male_boundary
+    )
+
+    print()
+    print(f"Department {department}")
+    print(
+        f"  Male boundary:   "
+        f"{male_boundary:.2f} Qualification"
+    )
+
+    print(
+        f"  Female boundary: "
+        f"{female_boundary:.2f} Qualification"
+    )
+
+    print(
+        f"  Boundary equation: "
+        f"Qualification = "
+        f"{slope:.2f} * Gender + "
+        f"{male_boundary:.2f}"
+    )
+
+    print(
+        f"  Gender gap / slope: "
+        f"{slope:.2f} Qualification points"
+    )
+
+print()
+print("=" * 60)
+
+
+# ============================================================
+# CREATE 3D PLOT
 # ============================================================
 
 fig = plt.figure(figsize=(12, 9))
-ax = fig.add_subplot(111, projection="3d")
+
+ax = fig.add_subplot(
+    111,
+    projection="3d"
+)
 
 ax.scatter(
     df["x"],
@@ -134,34 +210,30 @@ ax.scatter(
 # ============================================================
 # Draw decision boundaries
 # ============================================================
-#
-# Each department gets ONE line spanning:
-#
-#       Male ---------------- Female
-#
-# The qualification height of the line changes between
-# the male and female decision thresholds.
-#
-# Department A:
-#       Male boundary -------- Female boundary
-#
-# Department B:
-#       Male boundary -------- Female boundary
-#
-# ============================================================
 
 for department, y_pos in department_map.items():
 
-    male_boundary = boundaries[(department, "Male")]
-    female_boundary = boundaries[(department, "Female")]
+    male_boundary = boundaries[
+        (department, "Male")
+    ]
 
-    # X goes from Male -> Female
-    x_line = np.array([0, 1])
+    female_boundary = boundaries[
+        (department, "Female")
+    ]
 
-    # Keep department fixed
-    y_line = np.array([y_pos, y_pos])
+    # Male -> Female
+    x_line = np.array([
+        0,
+        1
+    ])
 
-    # Qualification boundary changes across gender
+    # Department stays fixed
+    y_line = np.array([
+        y_pos,
+        y_pos
+    ])
+
+    # Boundary changes across gender
     z_line = np.array([
         male_boundary,
         female_boundary
@@ -173,27 +245,69 @@ for department, y_pos in department_map.items():
         z_line,
         color="gray",
         linewidth=3,
-        linestyle="--"
+        linestyle="--",
+        alpha=0.7
     )
+
 
 # ============================================================
 # Axis labels
 # ============================================================
 
-ax.set_xlabel("Gender", labelpad=12)
-ax.set_ylabel("Department", labelpad=12)
-ax.set_zlabel("Qualification", labelpad=12)
+ax.set_xlabel(
+    "Gender",
+    labelpad=12
+)
 
+ax.set_ylabel(
+    "Department",
+    labelpad=12
+)
+
+ax.set_zlabel(
+    "Qualification",
+    labelpad=12
+)
+
+# ============================================================
 # Gender
-ax.set_xticks([0, 1])
-ax.set_xticklabels(["Male", "Female"])
+# ============================================================
 
+ax.set_xticks([
+    0,
+    1
+])
+
+ax.set_xticklabels([
+    "Male",
+    "Female"
+])
+
+# ============================================================
 # Department
-ax.set_yticks([0, 1])
-ax.set_yticklabels(["A", "B"])
+# ============================================================
 
+ax.set_yticks([
+    0,
+    1
+])
+
+ax.set_yticklabels([
+    "A",
+    "B"
+])
+
+# ============================================================
 # Qualification
-ax.set_zticks([1, 2, 3, 4])
+# ============================================================
+
+ax.set_zticks([
+    1,
+    2,
+    3,
+    4
+])
+
 ax.set_zticklabels([
     "Q4 (Lowest)",
     "Q3",
@@ -201,15 +315,20 @@ ax.set_zticklabels([
     "Q1 (Highest)"
 ])
 
-ax.set_zlim(0.5, 4.5)
+ax.set_zlim(
+    0.5,
+    4.5
+)
 
 # ============================================================
 # Legend
 # ============================================================
 
 legend_elements = [
+
     Line2D(
-        [0], [0],
+        [0],
+        [0],
         marker="o",
         color="w",
         label="Admitted",
@@ -219,7 +338,8 @@ legend_elements = [
     ),
 
     Line2D(
-        [0], [0],
+        [0],
+        [0],
         marker="o",
         color="w",
         label="Rejected",
@@ -229,7 +349,8 @@ legend_elements = [
     ),
 
     Line2D(
-        [0], [0],
+        [0],
+        [0],
         color="gray",
         linewidth=3,
         linestyle="--",
@@ -263,4 +384,5 @@ ax.view_init(
 )
 
 plt.tight_layout()
+
 plt.show()
