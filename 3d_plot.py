@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 # ============================================================
 # CSV_FILE = "causal-2/1-training_data.csv"
 # CSV_FILE = "causal-2/3-repaired_data.csv"
-CSV_FILE = "causal-2/8-evaluation_result.csv"
+CSV_FILE = "causal-2/8-evaluation_result_logistic.csv"
 
 
 # ============================================================
