@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 # ============================================================
 
 # CSV_PATH = "lfr/1-training_data.csv"
-CSV_PATH = "lfr/4-representations.csv"
+CSV_PATH = "lfr-8prototypes/4-representations-lbfgs.csv"
 
 # Column names
 GENDER_COL = "Gender"
