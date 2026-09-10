@@ -7,13 +7,13 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "lfr-0successful-10prototypes/4-representations_10k.csv"
-# CSV_PATH = "lfr-8prototypes/4-representations-lbfgs.csv"
+CSV_PATH = "lfr-0successful/1-training_data.csv"
+PROTOTYPE_CSV_PATH = "lfr-0successful/3-prototypes_4k.csv"
 
 # Column names
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
-ADMISSION_COL = "Predicted_Admission" # Admission or Predicted_Admission
+ADMISSION_COL = "Admission"  # Admission or Predicted_Admission
 
 # SAT axis
 SAT_MIN = 350
@@ -21,9 +21,6 @@ SAT_MAX = 1700
 SAT_TICK_INTERVAL = 100
 
 # Jitter amount
-# 0.10 = small spread
-# 0.20 = moderate spread
-# 0.30 = large spread
 JITTER_WIDTH = 0.12
 
 # Reproducible jitter
@@ -39,14 +36,21 @@ BOUNDARY_LINE_STYLE = "--"
 BOUNDARY_COLOR = "black"
 
 # Horizontal extent of each gender column
-# The lines will NOT cross into the other gender column.
 COLUMN_HALF_WIDTH = 0.25
+
+# Prototype appearance
+PROTOTYPE_COLOR = "pink"
+PROTOTYPE_SIZE = 110
+PROTOTYPE_X = 0.5
 
 # ============================================================
 # LOAD DATA
 # ============================================================
 
 df = pd.read_csv(CSV_PATH)
+
+# Load prototype locations
+prototype_df = pd.read_csv(PROTOTYPE_CSV_PATH)
 
 # Use the entire dataset
 plot_df = df.copy()
@@ -110,7 +114,6 @@ for gender in ["M", "F"]:
         gender_df[ADMISSION_COL] == "No"
     ][SAT_COL]
 
-    # Make sure both classes exist
     if len(accepted) == 0 or len(rejected) == 0:
         boundaries[gender] = None
         continue
@@ -132,17 +135,6 @@ male_boundary = boundaries["M"]
 female_boundary = boundaries["F"]
 
 if male_boundary is not None and female_boundary is not None:
-
-    # Equation:
-    # SAT = slope * Gender + intercept
-    #
-    # Gender:
-    # M = 0
-    # F = 1
-    #
-    # Therefore:
-    # intercept = Male boundary
-    # slope = Female boundary - Male boundary
 
     slope = female_boundary - male_boundary
     intercept = male_boundary
@@ -221,6 +213,41 @@ for admission, color in admission_colors.items():
     )
 
 # ============================================================
+# PLOT PROTOTYPES
+# ============================================================
+
+prototype_sat_values = prototype_df["SAT"].to_numpy()
+
+prototype_x_values = np.full(
+    len(prototype_sat_values),
+    PROTOTYPE_X
+)
+
+plt.scatter(
+    prototype_x_values,
+    prototype_sat_values,
+    color=PROTOTYPE_COLOR,
+    s=PROTOTYPE_SIZE,
+    edgecolors="black",
+    linewidths=0.9,
+    zorder=5
+)
+
+# Label each prototype with its SAT value
+for _, row in prototype_df.iterrows():
+
+    sat = row["SAT"]
+    score = row["Admission_Score"]
+
+    plt.text(
+        PROTOTYPE_X + 0.04,
+        sat,
+        f"({sat:.0f}, {score:.2f})",
+        fontsize=10,
+        verticalalignment="center",
+        fontweight="bold"
+    )
+# ============================================================
 # DRAW MALE DECISION BOUNDARY
 # ============================================================
 
@@ -265,8 +292,8 @@ if female_boundary is not None:
 # ============================================================
 
 plt.xticks(
-    [0, 1],
-    ["Male", "Female"]
+    [0, 0.5, 1],
+    ["Male", "Prototypes", "Female"]
 )
 
 plt.yticks(
@@ -287,11 +314,11 @@ plt.xlim(
     1.4
 )
 
-plt.xlabel("Gender")
+plt.xlabel("Gender / Prototype Location")
 plt.ylabel("SAT Score")
 
 plt.title(
-    "Admission Outcomes"
+    "Admission Outcomes with LFR Prototypes"
 )
 
 # ============================================================
@@ -319,6 +346,17 @@ legend_elements = [
         markerfacecolor="red",
         markeredgecolor="black",
         markersize=9
+    ),
+
+    Line2D(
+        [0],
+        [0],
+        marker="o",
+        color="w",
+        label="LFR Prototype",
+        markerfacecolor=PROTOTYPE_COLOR,
+        markeredgecolor="black",
+        markersize=10
     ),
 
     Line2D(
