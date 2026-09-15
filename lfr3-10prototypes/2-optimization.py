@@ -1,41 +1,29 @@
 import numpy as np
 import pandas as pd
-from scipy.optimize import differential_evolution
+from scipy.optimize import minimize
 
 # ============================================================
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "lfr-8prototypes/1-training_data.csv"
+CSV_PATH = "lfr-10prototypes/1-training_data.csv"
 
-# Output files
-PROTOTYPE_OUTPUT_CSV = "lfr-8prototypes/3-prototypes.csv"
-REPRESENTATION_OUTPUT_CSV = "lfr-8prototypes/4-representations.csv"
+PROTOTYPE_OUTPUT_CSV = "lfr-10prototypes/3-prototypes_10k.csv"
+REPRESENTATION_OUTPUT_CSV = "lfr-10prototypes/4-representations_10k.csv"
 
-# Columns
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
 ADMISSION_COL = "Admission"
 
-# Number of prototypes
-K = 8
+K = 10
 
-# ------------------------------------------------------------
 # LFR objective weights
-#
-# L = Az * Lz + Ax * Lx + Ay * Ly
-# ------------------------------------------------------------
-
 AZ = 1.0
 AX = 1.0
 AY = 1.0
 
-# Optimization
 RANDOM_SEED = 42
-MAX_ITER = 500
-POP_SIZE = 20
 
-# Numerical stability
 EPSILON = 1e-10
 
 
@@ -45,10 +33,8 @@ EPSILON = 1e-10
 
 df = pd.read_csv(CSV_PATH)
 
-# SAT
 X_original = df[SAT_COL].astype(float).to_numpy()
 
-# Normalize SAT to [0, 1]
 SAT_MIN = X_original.min()
 SAT_MAX = X_original.max()
 
@@ -58,48 +44,35 @@ X = (
     SAT_MAX - SAT_MIN
 )
 
-# Gender
 gender = df[GENDER_COL].to_numpy()
 
 male_mask = gender == "M"
 female_mask = gender == "F"
 
-# Admission
 Y = (
     df[ADMISSION_COL]
-    .map({"Yes": 1.0, "No": 0.0})
+    .map({
+        "Yes": 1.0,
+        "No": 0.0
+    })
     .to_numpy()
 )
 
 
 # ============================================================
-# PROTOTYPE REPRESENTATION
+# PROTOTYPE MEMBERSHIP
 # ============================================================
 
 def calculate_membership(X, prototypes, alpha):
     """
-    Calculate:
-
-        M_nk = P(Z=k | x_n)
-
-    X:
-        normalized SAT values
-
-    prototypes:
-        normalized SAT locations of prototypes
-
-    alpha:
-        feature weight
+    M_nk = P(Z = k | x_n)
     """
 
-    # Squared distance between every student
-    # and every prototype
     distances = alpha * (
         X[:, np.newaxis]
         - prototypes[np.newaxis, :]
     ) ** 2
 
-    # Softmax over negative distances
     logits = -distances
 
     # Numerical stability
@@ -130,8 +103,13 @@ def fairness_loss(M):
     Lz = sum_k |M_k^male - M_k^female|
     """
 
-    male_distribution = M[male_mask].mean(axis=0)
-    female_distribution = M[female_mask].mean(axis=0)
+    male_distribution = (
+        M[male_mask].mean(axis=0)
+    )
+
+    female_distribution = (
+        M[female_mask].mean(axis=0)
+    )
 
     Lz = np.sum(
         np.abs(
@@ -147,11 +125,13 @@ def fairness_loss(M):
 # RECONSTRUCTION LOSS
 # ============================================================
 
-def reconstruction_loss(X, M, prototypes):
+def reconstruction_loss(
+    X,
+    M,
+    prototypes
+):
     """
-    Reconstruct:
-
-        x_hat_n = sum_k M_nk * v_k
+    x_hat_n = sum_k M_nk * v_k
     """
 
     X_hat = np.sum(
@@ -170,11 +150,13 @@ def reconstruction_loss(X, M, prototypes):
 # CLASSIFICATION LOSS
 # ============================================================
 
-def classification_loss(Y, M, prototype_scores):
+def classification_loss(
+    Y,
+    M,
+    prototype_scores
+):
     """
-    Predict Admission using:
-
-        y_hat_n = sum_k M_nk * w_k
+    y_hat_n = sum_k M_nk * w_k
     """
 
     Y_hat = np.sum(
@@ -190,7 +172,8 @@ def classification_loss(Y, M, prototype_scores):
 
     Ly = -np.mean(
         Y * np.log(Y_hat)
-        + (1.0 - Y)
+        +
+        (1.0 - Y)
         * np.log(1.0 - Y_hat)
     )
 
@@ -203,54 +186,121 @@ def classification_loss(Y, M, prototype_scores):
 
 def objective(params):
 
-    # First K parameters:
+    # First K values:
     # prototype locations
     prototypes = params[:K]
 
-    # Next K parameters:
+    # Next K values:
     # prototype Admission scores
-    prototype_scores = params[K:2 * K]
+    prototype_scores = params[
+        K:2 * K
+    ]
 
-    # Last parameter:
+    # Last value:
     # alpha
     alpha = params[-1]
 
-    # Calculate Z representation
     M = calculate_membership(
         X,
         prototypes,
         alpha
     )
 
-    # Fairness
     Lz = fairness_loss(M)
 
-    # Reconstruction
     Lx = reconstruction_loss(
         X,
         M,
         prototypes
     )
 
-    # Classification
     Ly = classification_loss(
         Y,
         M,
         prototype_scores
     )
 
-    # Combined objective
-    loss = (
+    total_loss = (
         AZ * Lz
         + AX * Lx
         + AY * Ly
     )
 
-    return loss
+    return total_loss
 
 
 # ============================================================
-# OPTIMIZATION BOUNDS
+# INITIAL PARAMETERS
+# ============================================================
+
+rng = np.random.default_rng(
+    RANDOM_SEED
+)
+
+# ------------------------------------------------------------
+# Initial prototype locations
+#
+# Instead of completely random locations, initialize them
+# approximately evenly across [0, 1].
+# ------------------------------------------------------------
+
+initial_prototypes = np.linspace(
+    0.05,
+    0.95,
+    K
+)
+
+# Add a tiny amount of noise so prototypes do not all
+# follow a perfectly symmetric initialization.
+initial_prototypes += rng.normal(
+    0,
+    0.01,
+    K
+)
+
+initial_prototypes = np.clip(
+    initial_prototypes,
+    0.0,
+    1.0
+)
+
+
+# ------------------------------------------------------------
+# Initial Admission scores
+# ------------------------------------------------------------
+
+initial_scores = rng.uniform(
+    0.25,
+    0.75,
+    K
+)
+
+
+# ------------------------------------------------------------
+# Initial alpha
+# ------------------------------------------------------------
+
+initial_alpha = np.array([
+    10.0
+])
+
+
+# Full parameter vector:
+#
+# [v1 ... vK,
+#  w1 ... wK,
+#  alpha]
+# ------------------------------------------------------------
+
+initial_params = np.concatenate([
+    initial_prototypes,
+    initial_scores,
+    initial_alpha
+])
+
+
+# ============================================================
+# PARAMETER BOUNDS
 # ============================================================
 
 prototype_bounds = [
@@ -275,20 +325,28 @@ bounds = (
 
 
 # ============================================================
-# RUN OPTIMIZATION
+# RUN L-BFGS-B
 # ============================================================
 
-print("Running LFR optimization...")
+print("Running LFR optimization with L-BFGS-B...")
 print()
 
-result = differential_evolution(
+print(
+    f"Initial objective: "
+    f"{objective(initial_params):.6f}"
+)
+
+result = minimize(
     objective,
+    x0=initial_params,
+    method="L-BFGS-B",
     bounds=bounds,
-    seed=RANDOM_SEED,
-    maxiter=MAX_ITER,
-    popsize=POP_SIZE,
-    polish=True,
-    updating="immediate"
+    options={
+        "maxiter": 5000,
+        "ftol": 1e-12,
+        "gtol": 1e-8,
+        "maxls": 50
+    }
 )
 
 
@@ -300,13 +358,15 @@ params = result.x
 
 prototypes_normalized = params[:K]
 
-prototype_scores = params[K:2 * K]
+prototype_scores = params[
+    K:2 * K
+]
 
 alpha = params[-1]
 
 
 # ============================================================
-# CONVERT PROTOTYPE LOCATIONS TO ORIGINAL SAT SCALE
+# CONVERT PROTOTYPES BACK TO SAT SCALE
 # ============================================================
 
 prototypes_sat = (
@@ -317,22 +377,28 @@ prototypes_sat = (
 
 
 # ============================================================
-# SORT PROTOTYPES BY SAT LOCATION
+# SORT PROTOTYPES BY SAT
 # ============================================================
 
-order = np.argsort(prototypes_sat)
+order = np.argsort(
+    prototypes_sat
+)
 
-prototypes_sat = prototypes_sat[order]
-
-prototype_scores = prototype_scores[order]
+prototypes_sat = (
+    prototypes_sat[order]
+)
 
 prototypes_normalized = (
     prototypes_normalized[order]
 )
 
+prototype_scores = (
+    prototype_scores[order]
+)
+
 
 # ============================================================
-# CALCULATE FINAL Z REPRESENTATION
+# FINAL MEMBERSHIP MATRIX
 # ============================================================
 
 M = calculate_membership(
@@ -343,17 +409,21 @@ M = calculate_membership(
 
 
 # ============================================================
-# CALCULATE LFR ADMISSION SCORE
+# FINAL LFR SCORE
 # ============================================================
 
 Y_hat = np.sum(
-    M * prototype_scores[np.newaxis, :],
+    M
+    * prototype_scores[
+        np.newaxis,
+        :
+    ],
     axis=1
 )
 
 
 # ============================================================
-# CALCULATE FINAL LOSSES
+# FINAL LOSSES
 # ============================================================
 
 Lz = fairness_loss(M)
@@ -378,14 +448,24 @@ total_loss = (
 
 
 # ============================================================
-# SAVE LEARNED PROTOTYPES
+# SAVE PROTOTYPES
 # ============================================================
 
 prototype_df = pd.DataFrame({
-    "Prototype": np.arange(1, K + 1),
-    "SAT": prototypes_sat,
-    "Admission_Score": prototype_scores,
-    "Alpha": alpha
+    "Prototype":
+        np.arange(
+            1,
+            K + 1
+        ),
+
+    "SAT":
+        prototypes_sat,
+
+    "Admission_Score":
+        prototype_scores,
+
+    "Alpha":
+        alpha
 })
 
 prototype_df.to_csv(
@@ -395,59 +475,18 @@ prototype_df.to_csv(
 
 
 # ============================================================
-# OUTPUT LEARNED PROTOTYPES
-# ============================================================
-
-print("=" * 60)
-print("LEARNED LFR PROTOTYPES")
-print("=" * 60)
-
-for k in range(K):
-
-    print(
-        f"Prototype {k + 1}: "
-        f"SAT = {prototypes_sat[k]:.2f}, "
-        f"Admission score = "
-        f"{prototype_scores[k]:.4f}"
-    )
-
-print()
-
-print(f"Alpha: {alpha:.4f}")
-
-print()
-
-print(
-    f"Saved prototypes to: "
-    f"{PROTOTYPE_OUTPUT_CSV}"
-)
-
-print()
-
-
-# ============================================================
-# DETERMINE ORIGINAL ADMISSION DISTRIBUTION
+# DETERMINE ORIGINAL YES COUNT
 # ============================================================
 
 original_yes_count = (
-    df[ADMISSION_COL] == "Yes"
-).sum()
-
-original_no_count = (
-    df[ADMISSION_COL] == "No"
+    df[
+        ADMISSION_COL
+    ] == "Yes"
 ).sum()
 
 
 # ============================================================
-# DETERMINE PREDICTED ADMISSION
-# ============================================================
-#
-# Rank students by LFR_Score.
-#
-# The top N students are predicted Yes, where:
-#
-#     N = number of original Yes labels
-#
+# RANK-BASED PREDICTIONS
 # ============================================================
 
 sorted_indices = np.argsort(
@@ -469,13 +508,15 @@ predicted_admission[
 
 
 # ============================================================
-# DETERMINE EFFECTIVE THRESHOLD
+# EFFECTIVE THRESHOLD
 # ============================================================
 
 if original_yes_count > 0:
 
     threshold = np.min(
-        Y_hat[yes_indices]
+        Y_hat[
+            yes_indices
+        ]
     )
 
 else:
@@ -486,41 +527,23 @@ else:
 # ============================================================
 # CREATE REPRESENTATION DATAFRAME
 # ============================================================
-#
-# Each student receives:
-#
-# ID
-# Gender
-# SAT
-# Admission
-# v1 ... vK
-# LFR_Score
-# Predicted_Admission
-#
-# where:
-#
-# vk = P(Z = prototype k | x_n)
-#
-# and:
-#
-# LFR_Score = sum_k vk * Admission_Score_k
-#
-# ============================================================
 
 representation_df = pd.DataFrame({
-    "ID": df["ID"],
-    "Gender": df["Gender"],
-    "SAT": df["SAT"],
-    "Admission": df["Admission"]
+    "ID":
+        df["ID"],
+
+    "Gender":
+        df["Gender"],
+
+    "SAT":
+        df["SAT"],
+
+    "Admission":
+        df["Admission"]
 })
 
-# Add all prototype-membership probabilities dynamically.
-#
-# For K = 8 this creates:
-#
-# v1, v2, v3, v4, v5, v6, v7, v8
-#
 for k in range(K):
+
     representation_df[
         f"v{k + 1}"
     ] = M[:, k]
@@ -534,10 +557,6 @@ representation_df[
 ] = predicted_admission
 
 
-# ============================================================
-# SAVE REPRESENTATION CSV
-# ============================================================
-
 representation_df.to_csv(
     REPRESENTATION_OUTPUT_CSV,
     index=False
@@ -545,64 +564,17 @@ representation_df.to_csv(
 
 
 # ============================================================
-# OUTPUT LFR REPRESENTATION SUMMARY
+# OUTPUT LEARNED PROTOTYPES
 # ============================================================
 
 print("=" * 60)
-print("LFR REPRESENTATION")
+print("LEARNED LFR PROTOTYPES")
 print("=" * 60)
 
 print()
 
 print(
-    f"Original Admission: "
-    f"Yes = {original_yes_count}, "
-    f"No = {original_no_count}"
-)
-
-predicted_yes_count = (
-    predicted_admission == "Yes"
-).sum()
-
-predicted_no_count = (
-    predicted_admission == "No"
-).sum()
-
-print(
-    f"Predicted Admission: "
-    f"Yes = {predicted_yes_count}, "
-    f"No = {predicted_no_count}"
-)
-
-print()
-
-print(
-    f"Prediction threshold: "
-    f"{threshold:.6f}"
-)
-
-print()
-
-print(
-    f"Saved representations to: "
-    f"{REPRESENTATION_OUTPUT_CSV}"
-)
-
-print()
-
-
-# ============================================================
-# OUTPUT FIRST 10 REPRESENTATIONS
-# ============================================================
-
-print("=" * 60)
-print("FIRST 10 LFR REPRESENTATIONS")
-print("=" * 60)
-
-print()
-
-print(
-    representation_df.head(10).to_string(
+    prototype_df.to_string(
         index=False
     )
 )
@@ -611,8 +583,20 @@ print()
 
 
 # ============================================================
-# CALCULATE FINAL GROUP PROTOTYPE DISTRIBUTIONS
+# GROUP PROTOTYPE DISTRIBUTIONS
 # ============================================================
+
+male_distribution = (
+    M[male_mask].mean(
+        axis=0
+    )
+)
+
+female_distribution = (
+    M[female_mask].mean(
+        axis=0
+    )
+)
 
 print("=" * 60)
 print("GROUP PROTOTYPE DISTRIBUTIONS")
@@ -620,27 +604,21 @@ print("=" * 60)
 
 print()
 
-male_distribution = (
-    M[male_mask].mean(axis=0)
-)
-
-female_distribution = (
-    M[female_mask].mean(axis=0)
-)
-
 for k in range(K):
 
     print(
         f"Prototype {k + 1}: "
-        f"Male = {male_distribution[k]:.4f}, "
-        f"Female = {female_distribution[k]:.4f}"
+        f"Male = "
+        f"{male_distribution[k]:.4f}, "
+        f"Female = "
+        f"{female_distribution[k]:.4f}"
     )
 
 print()
 
 
 # ============================================================
-# OUTPUT LOSSES
+# LOSSES
 # ============================================================
 
 print("=" * 60)
@@ -650,19 +628,23 @@ print("=" * 60)
 print()
 
 print(
-    f"Fairness loss Lz:        {Lz:.6f}"
+    f"Fairness loss Lz:       "
+    f"{Lz:.6f}"
 )
 
 print(
-    f"Reconstruction loss Lx:  {Lx:.6f}"
+    f"Reconstruction loss Lx: "
+    f"{Lx:.6f}"
 )
 
 print(
-    f"Classification loss Ly:  {Ly:.6f}"
+    f"Classification loss Ly: "
+    f"{Ly:.6f}"
 )
 
 print(
-    f"Total objective:         {total_loss:.6f}"
+    f"Total objective:        "
+    f"{total_loss:.6f}"
 )
 
 print()
@@ -679,41 +661,35 @@ print("=" * 60)
 print()
 
 print(
-    f"Success: {result.success}"
+    f"Success: "
+    f"{result.success}"
 )
 
 print(
-    f"Message: {result.message}"
+    f"Message: "
+    f"{result.message}"
 )
 
 print(
-    f"Objective: {result.fun:.6f}"
+    f"Iterations: "
+    f"{result.nit}"
+)
+
+print(
+    f"Function evaluations: "
+    f"{result.nfev}"
+)
+
+print(
+    f"Final objective: "
+    f"{result.fun:.6f}"
 )
 
 print()
 
 
 # ============================================================
-# OUTPUT PROTOTYPE CSV
-# ============================================================
-
-print("=" * 60)
-print("PROTOTYPE CSV")
-print("=" * 60)
-
-print()
-
-print(
-    prototype_df.to_string(
-        index=False
-    )
-)
-
-print()
-
-
-# ============================================================
-# OUTPUT REPRESENTATION CSV
+# REPRESENTATION OUTPUT
 # ============================================================
 
 print("=" * 60)
@@ -729,3 +705,18 @@ print(
 )
 
 print()
+
+print(
+    f"Prediction threshold: "
+    f"{threshold:.6f}"
+)
+
+print(
+    f"Saved prototypes to: "
+    f"{PROTOTYPE_OUTPUT_CSV}"
+)
+
+print(
+    f"Saved representations to: "
+    f"{REPRESENTATION_OUTPUT_CSV}"
+)

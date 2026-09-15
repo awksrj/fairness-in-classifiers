@@ -7,8 +7,8 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "lfr-0successful/1-training_data.csv"
-PROTOTYPE_CSV_PATH = "lfr-0successful/3-prototypes_4k.csv"
+CSV_PATH = "lfr-10prototypes/1-training_data.csv"
+PROTOTYPE_CSV_PATH = "lfr-10prototypes/3-prototypes_10k.csv"
 
 # Column names
 GENDER_COL = "Gender"
@@ -218,10 +218,37 @@ for admission, color in admission_colors.items():
 
 prototype_sat_values = prototype_df["SAT"].to_numpy()
 
+# Start all prototypes at the center
 prototype_x_values = np.full(
     len(prototype_sat_values),
-    PROTOTYPE_X
+    PROTOTYPE_X,
+    dtype=float
 )
+
+# ------------------------------------------------------------
+# Horizontally separate prototypes that are very close in SAT
+# ------------------------------------------------------------
+
+PROTOTYPE_OVERLAP_THRESHOLD = 40   # SAT points
+PROTOTYPE_JITTER = 0.06
+
+for i in range(len(prototype_sat_values)):
+    for j in range(i):
+
+        if abs(
+            prototype_sat_values[i]
+            - prototype_sat_values[j]
+        ) < PROTOTYPE_OVERLAP_THRESHOLD:
+
+            # Put close prototypes on opposite sides
+            prototype_x_values[j] = (
+                PROTOTYPE_X - PROTOTYPE_JITTER
+            )
+
+            prototype_x_values[i] = (
+                PROTOTYPE_X + PROTOTYPE_JITTER
+            )
+
 
 plt.scatter(
     prototype_x_values,
@@ -233,19 +260,53 @@ plt.scatter(
     zorder=5
 )
 
-# Label each prototype with its SAT value
-for _, row in prototype_df.iterrows():
+# ============================================================
+# LABEL PROTOTYPES
+#
+# For prototypes at the same / nearby SAT location:
+# alternate labels above and below the points.
+# ============================================================
+
+LABEL_OFFSET = 25
+LABEL_OVERLAP_THRESHOLD = 40  # SAT points
+
+# Track how many nearby prototypes have already been labeled
+for i, (_, row) in enumerate(prototype_df.iterrows()):
 
     sat = row["SAT"]
     score = row["Admission_Score"]
 
+    # Count earlier prototypes that are close to this SAT
+    nearby_before = 0
+
+    for j in range(i):
+        if abs(
+            prototype_sat_values[i]
+            - prototype_sat_values[j]
+        ) < LABEL_OVERLAP_THRESHOLD:
+            nearby_before += 1
+
+    # Alternate:
+    # 0 -> above
+    # 1 -> below
+    # 2 -> above
+    # 3 -> below
+    if nearby_before % 2 == 0:
+        label_y = sat + LABEL_OFFSET
+        vertical_alignment = "bottom"
+    else:
+        label_y = sat - LABEL_OFFSET
+        vertical_alignment = "top"
+
     plt.text(
-        PROTOTYPE_X + 0.04,
-        sat,
+        prototype_x_values[i],
+        label_y,
         f"({sat:.0f}, {score:.2f})",
         fontsize=10,
-        verticalalignment="center",
-        fontweight="bold"
+        horizontalalignment="center",
+        verticalalignment=vertical_alignment,
+        fontweight="bold",
+        zorder=6
     )
 # ============================================================
 # DRAW MALE DECISION BOUNDARY
