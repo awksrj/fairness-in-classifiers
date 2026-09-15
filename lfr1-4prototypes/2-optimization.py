@@ -6,10 +6,10 @@ from scipy.optimize import minimize
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "lfr-0successful/1-training_data.csv"
+CSV_PATH = "lfr1-4prototypes/1-training_data.csv"
 
-PROTOTYPE_OUTPUT_CSV = "lfr-0successful/3-prototypes_4k.csv"
-REPRESENTATION_OUTPUT_CSV = "lfr-0successful/4-representations_4k.csv"
+PROTOTYPE_OUTPUT_CSV = "lfr1-4prototypes/3-prototypes_4k.csv"
+REPRESENTATION_OUTPUT_CSV = "lfr1-4prototypes/4-representations_4k.csv"
 
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
@@ -461,6 +461,9 @@ prototype_df = pd.DataFrame({
     "SAT":
         prototypes_sat,
 
+    "normalized_sat":
+        prototypes_normalized,
+
     "Admission_Score":
         prototype_scores,
 
@@ -537,6 +540,9 @@ representation_df = pd.DataFrame({
 
     "SAT":
         df["SAT"],
+
+    "normalized_sat":
+        X,
 
     "Admission":
         df["Admission"]

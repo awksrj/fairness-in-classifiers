@@ -86,3 +86,8 @@ Thumbs.db
 *.key
 credentials.json
 secrets.json
+
+# Local database files
+data/
+*.duckdb
+*.duckdb.wal
