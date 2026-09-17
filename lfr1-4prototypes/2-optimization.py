@@ -14,6 +14,10 @@ REPRESENTATION_OUTPUT_CSV = "lfr1-4prototypes/4-representations_4k.csv"
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
 ADMISSION_COL = "Admission"
+EXPLAIN_MEMBERSHIP_IDS = [
+    28,   # F, 1240, No
+    12    # M, 900, Yes
+]
 
 K = 4
 
@@ -92,6 +96,164 @@ def calculate_membership(X, prototypes, alpha):
     )
 
     return M
+
+# ============================================================
+# EXPLAIN PROTOTYPE MEMBERSHIP
+# ============================================================
+
+def explain_membership(
+    row_index,
+    df,
+    X,
+    prototypes_normalized,
+    prototypes_sat,
+    prototype_scores,
+    alpha
+):
+    """
+    Print a step-by-step explanation of how prototype
+    memberships and the final LFR score are calculated
+    for one data point.
+    """
+
+    row = df.iloc[row_index]
+
+    student_id = row["ID"]
+    gender = row[GENDER_COL]
+    sat = row[SAT_COL]
+    admission = row[ADMISSION_COL]
+
+    x = X[row_index]
+
+    print("=" * 70)
+    print(
+        f"MEMBERSHIP EXPLANATION: "
+        f"ID {student_id}, {gender}, {sat}, {admission}"
+    )
+    print("=" * 70)
+    print()
+
+    print(f"Original SAT:   {sat}")
+    print(f"Normalized SAT: {x:.6f}")
+    print(f"Alpha:          {alpha:.6f}")
+    print()
+
+    # --------------------------------------------------------
+    # Raw membership weights
+    #
+    # weight_k = exp(-alpha * (x - prototype_k)^2)
+    # --------------------------------------------------------
+
+    raw_weights = []
+
+    for k in range(K):
+
+        distance_squared = (
+            x - prototypes_normalized[k]
+        ) ** 2
+
+        exponent = (
+            -alpha * distance_squared
+        )
+
+        raw_weight = np.exp(exponent)
+
+        raw_weights.append(raw_weight)
+
+        print(f"Prototype {k + 1}")
+        print(
+            f"  SAT location:        "
+            f"{prototypes_sat[k]:.2f}"
+        )
+        print(
+            f"  Normalized location: "
+            f"{prototypes_normalized[k]:.6f}"
+        )
+        print(
+            f"  Admission score:     "
+            f"{prototype_scores[k]:.6f}"
+        )
+        print(
+            f"  Squared distance:    "
+            f"({x:.6f} - "
+            f"{prototypes_normalized[k]:.6f})^2 "
+            f"= {distance_squared:.6f}"
+        )
+        print(
+            f"  Raw weight:          "
+            f"exp(-{alpha:.6f} * "
+            f"{distance_squared:.6f}) "
+            f"= {raw_weight:.6f}"
+        )
+        print()
+
+    raw_weights = np.array(raw_weights)
+
+    denominator = raw_weights.sum()
+
+    memberships = (
+        raw_weights / denominator
+    )
+
+    # --------------------------------------------------------
+    # Membership normalization
+    # --------------------------------------------------------
+
+    print("RAW WEIGHT NORMALIZATION")
+    print("-" * 70)
+
+    denominator_expression = " + ".join(
+        f"{w:.6f}"
+        for w in raw_weights
+    )
+
+    print(
+        f"Denominator = "
+        f"{denominator_expression}"
+        f" = {denominator:.6f}"
+    )
+    print()
+
+    for k in range(K):
+
+        print(
+            f"v{k + 1} = "
+            f"{raw_weights[k]:.6f} / "
+            f"{denominator:.6f} "
+            f"= {memberships[k]:.6f}"
+        )
+
+    print()
+
+    # --------------------------------------------------------
+    # Final LFR score
+    #
+    # y_hat = sum_k membership_k * prototype_score_k
+    # --------------------------------------------------------
+
+    print("LFR SCORE CALCULATION")
+    print("-" * 70)
+
+    terms = [
+        f"{memberships[k]:.4f} * "
+        f"{prototype_scores[k]:.4f}"
+        for k in range(K)
+    ]
+
+    score = np.sum(
+        memberships * prototype_scores
+    )
+
+    print(
+        "LFR_Score = "
+        + " + ".join(terms)
+    )
+
+    print(
+        f"          = {score:.6f}"
+    )
+
+    print()
 
 
 # ============================================================
@@ -726,3 +888,39 @@ print(
     f"Saved representations to: "
     f"{REPRESENTATION_OUTPUT_CSV}"
 )
+
+# ============================================================
+# DETAILED MEMBERSHIP EXPLANATIONS
+# ============================================================
+
+print()
+print("=" * 70)
+print("DETAILED MEMBERSHIP EXPLANATIONS")
+print("=" * 70)
+print()
+
+for student_id in EXPLAIN_MEMBERSHIP_IDS:
+
+    matching_indices = df.index[
+        df["ID"] == student_id
+    ].tolist()
+
+    if not matching_indices:
+        print(
+            f"WARNING: ID {student_id} "
+            f"was not found in the dataset."
+        )
+        print()
+        continue
+
+    row_index = matching_indices[0]
+
+    explain_membership(
+        row_index=row_index,
+        df=df,
+        X=X,
+        prototypes_normalized=prototypes_normalized,
+        prototypes_sat=prototypes_sat,
+        prototype_scores=prototype_scores,
+        alpha=alpha
+    )
