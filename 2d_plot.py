@@ -7,7 +7,7 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = "lfr-10prototypes/4-representations_10k.csv"
+CSV_PATH = r"lfr4-weights\5-representations_4k.csv"
 # CSV_PATH = "lfr-8prototypes/4-representations-lbfgs.csv"
 
 # Column names
