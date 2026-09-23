@@ -7,8 +7,8 @@ from scipy.optimize import minimize
 # CONFIGURATION
 # ============================================================
 CSV_PATH = "lfr4-weights/1-training_data.csv"
-PROTOTYPE_OUTPUT_CSV = "lfr4-weights/3-prototypes_4k.csv"
-REPRESENTATION_OUTPUT_CSV = "lfr4-weights/5-representations_4k.csv"
+PROTOTYPE_OUTPUT_CSV = "lfr4-weights/3-prototypes_4k_{criterion}.csv"
+REPRESENTATION_OUTPUT_CSV = "lfr4-weights/5-representations_4k_{criterion}.csv"
 WEIGHT_SEARCH_OUTPUT_CSV = "lfr4-weights/4-weight_grid_search_4k.csv"
 
 GENDER_COL = "Gender"
@@ -24,8 +24,8 @@ AX = 0.01
 AY_VALUES = [0.1, 0.5, 1.0, 5.0, 10.0]
 AZ_VALUES = [0.0, 0.1, 0.5, 1.0, 5.0, 10.0]
 
-# "min_discrimination" or "max_delta" (accuracy - discrimination)
-SELECTION_CRITERION = "max_delta"
+# Run both selection rules on the same 30 fitted candidates.
+SELECTION_CRITERIA = ("min_discrimination", "max_delta")
 RETRAIN_ON_FULL_DATA = True
 MAX_ITER = 5000
 EPSILON = 1e-10
@@ -195,14 +195,11 @@ protected_validation = validation_df[GENDER_COL].eq("F").to_numpy()
 # ============================================================
 # PAPER-STYLE WEIGHT GRID SEARCH
 # ============================================================
-if SELECTION_CRITERION not in {"min_discrimination", "max_delta"}:
-    raise ValueError("SELECTION_CRITERION must be min_discrimination or max_delta.")
-
 print("=" * 72)
 print("PAPER-STYLE LFR WEIGHT SEARCH")
 print("=" * 72)
 print(f"Training rows: {len(train_df)}; validation rows: {len(validation_df)}")
-print(f"Fixed Ax: {AX}; selection criterion: {SELECTION_CRITERION}\n")
+print(f"Fixed Ax: {AX}; selection criteria: {', '.join(SELECTION_CRITERIA)}\n")
 
 initial_params = make_initial_params(RANDOM_SEED)
 search_rows, search_results = [], []
@@ -234,135 +231,142 @@ for ay, az in itertools.product(AY_VALUES, AZ_VALUES):
 
 search_df = pd.DataFrame(search_rows)
 
-# Deterministic tie-breaking is necessary because binary validation decisions
-# often give several configurations identical accuracy/discrimination values.
-if SELECTION_CRITERION == "min_discrimination":
-    ranked = search_df.sort_values(
+# Select two winners from the SAME grid; ties prefer the secondary metric,
+# then smaller Az and Ay. Both rules may select the same configuration.
+rankings = {
+    "min_discrimination": (
         ["Validation_Discrimination", "Validation_Accuracy", "Az", "Ay"],
-        ascending=[True, False, True, True], kind="stable"
-    )
-else:
-    ranked = search_df.sort_values(
+        [True, False, True, True],
+    ),
+    "max_delta": (
         ["Validation_Delta", "Validation_Discrimination", "Az", "Ay"],
-        ascending=[False, True, True, True], kind="stable"
-    )
+        [False, True, True, True],
+    ),
+}
+selected_indices = {}
+for criterion in SELECTION_CRITERIA:
+    columns, ascending = rankings[criterion]
+    ranked = search_df.sort_values(columns, ascending=ascending, kind="stable")
+    selected_indices[criterion] = ranked.index[0]
+    search_df[f"Selected_{criterion}"] = search_df.index == selected_indices[criterion]
 
-selected_index = ranked.index[0]
-selected_row = search_df.loc[selected_index]
-selected_az = float(selected_row["Az"])
-selected_ax = float(selected_row["Ax"])
-selected_ay = float(selected_row["Ay"])
-search_df["Selected"] = False
-search_df.loc[selected_index, "Selected"] = True
 search_df.to_csv(WEIGHT_SEARCH_OUTPUT_CSV, index=False)
 
-print("\nSELECTED WEIGHTS")
-print(
-    f"Az={selected_az}, Ax={selected_ax}, Ay={selected_ay} | "
-    f"accuracy={selected_row['Validation_Accuracy']:.4f}, "
-    f"discrimination={selected_row['Validation_Discrimination']:.4f}, "
-    f"delta={selected_row['Validation_Delta']:.4f}\n"
-)
+print("\nSELECTED WEIGHTS (VALIDATION)")
+for criterion, index in selected_indices.items():
+    row = search_df.loc[index]
+    print(
+        f"{criterion}: Az={row['Az']}, Ax={row['Ax']}, Ay={row['Ay']} | "
+        f"accuracy={row['Validation_Accuracy']:.4f}, "
+        f"discrimination={row['Validation_Discrimination']:.4f}, "
+        f"delta={row['Validation_Delta']:.4f}"
+    )
 
 
 # ============================================================
-# RETRAIN SELECTED CONFIGURATION
+# FIT AND SAVE BOTH SELECTED MODELS
 # ============================================================
 if RETRAIN_ON_FULL_DATA:
     final_df = df.reset_index(drop=True)
-    SAT_MIN = final_df[SAT_COL].astype(float).min()
-    SAT_MAX = final_df[SAT_COL].astype(float).max()
-    X = normalize_sat(final_df[SAT_COL], SAT_MIN, SAT_MAX)
-    Y = encode_labels(final_df[ADMISSION_COL])
-    protected = final_df[GENDER_COL].eq("F").to_numpy()
-    print("Retraining selected weights on the full dataset...")
-    result = fit_lfr(
-        X, Y, protected, selected_az, selected_ax, selected_ay,
-        make_initial_params(RANDOM_SEED)
-    )
+    sat_min = final_df[SAT_COL].astype(float).min()
+    sat_max = final_df[SAT_COL].astype(float).max()
+    X_final = normalize_sat(final_df[SAT_COL], sat_min, sat_max)
+    Y_final = encode_labels(final_df[ADMISSION_COL])
+    protected_final = final_df[GENDER_COL].eq("F").to_numpy()
 else:
     final_df = train_df
-    SAT_MIN, SAT_MAX = train_sat_min, train_sat_max
-    X, Y, protected = X_train, Y_train, protected_train
-    result = search_results[selected_index]
+    sat_min, sat_max = train_sat_min, train_sat_max
+    X_final, Y_final, protected_final = X_train, Y_train, protected_train
 
-prototypes_normalized, prototype_scores, alpha = unpack_params(result.x)
-prototypes_sat = prototypes_normalized * (SAT_MAX - SAT_MIN) + SAT_MIN
-
-# Sort all prototype parameters together, preserving membership-column meaning.
-order = np.argsort(prototypes_sat)
-prototypes_sat = prototypes_sat[order]
-prototypes_normalized = prototypes_normalized[order]
-prototype_scores = prototype_scores[order]
-
-M = calculate_membership(X, prototypes_normalized, alpha)
-Y_hat = np.sum(M * prototype_scores[None, :], axis=1)
-predicted_admission = np.where(Y_hat >= PREDICTION_THRESHOLD, "Yes", "No")
-
-Lz = fairness_loss(M, protected)
-Lx = reconstruction_loss(X, M, prototypes_normalized)
-Ly = classification_loss(Y, M, prototype_scores)
-total_loss = selected_az * Lz + selected_ax * Lx + selected_ay * Ly
-
-
-# ============================================================
-# SAVE FINAL OUTPUTS
-# ============================================================
-prototype_df = pd.DataFrame({
-    "Prototype": np.arange(1, K + 1),
-    "SAT": prototypes_sat,
-    "Admission_Score": prototype_scores,
-    "Alpha": alpha,
-    "Az": selected_az,
-    "Ax": selected_ax,
-    "Ay": selected_ay,
-})
-prototype_df.to_csv(PROTOTYPE_OUTPUT_CSV, index=False)
-
-representation_df = final_df[["ID", GENDER_COL, SAT_COL, ADMISSION_COL]].copy()
-for k in range(K):
-    representation_df[f"v{k + 1}"] = M[:, k]
-representation_df["LFR_Score"] = Y_hat
-representation_df["Predicted_Admission"] = predicted_admission
-representation_df.to_csv(REPRESENTATION_OUTPUT_CSV, index=False)
-
-
-# ============================================================
-# REPORT FINAL MODEL
-# ============================================================
-print("\n" + "=" * 72)
-print("FINAL LFR MODEL")
-print("=" * 72)
-print(prototype_df.to_string(index=False))
-
-protected_distribution = M[protected].mean(axis=0)
-unprotected_distribution = M[~protected].mean(axis=0)
-print("\nGROUP PROTOTYPE DISTRIBUTIONS")
-for k in range(K):
-    print(
-        f"Prototype {k + 1}: Male={unprotected_distribution[k]:.4f}, "
-        f"Female={protected_distribution[k]:.4f}"
+# Avoid fitting twice when both criteria select the same weights.
+final_fits = {}
+for criterion in SELECTION_CRITERIA:
+    selected_index = selected_indices[criterion]
+    row = search_df.loc[selected_index]
+    selected_az, selected_ax, selected_ay = (
+        float(row["Az"]), float(row["Ax"]), float(row["Ay"])
     )
+    if RETRAIN_ON_FULL_DATA:
+        if selected_index not in final_fits:
+            print(f"\nRetraining {criterion} weights on all {len(final_df)} rows...")
+            final_fits[selected_index] = fit_lfr(
+                X_final, Y_final, protected_final,
+                selected_az, selected_ax, selected_ay,
+                make_initial_params(RANDOM_SEED),
+            )
+        result = final_fits[selected_index]
+    else:
+        result = search_results[selected_index]
 
-final_accuracy, final_discrimination, final_delta = performance_metrics(
-    Y, protected, Y_hat, PREDICTION_THRESHOLD
-)
-print("\nFINAL LOSSES AND METRICS")
-print(f"Fairness loss Lz:       {Lz:.6f}")
-print(f"Reconstruction loss Lx: {Lx:.6f}")
-print(f"Classification loss Ly: {Ly:.6f}")
-print(f"Weighted total:         {total_loss:.6f}")
-print(f"Accuracy:               {final_accuracy:.6f}")
-print(f"Discrimination:         {final_discrimination:.6f}")
-print(f"Delta:                  {final_delta:.6f}")
+    prototypes_normalized, prototype_scores, alpha = unpack_params(result.x)
+    prototypes_sat = prototypes_normalized * (sat_max - sat_min) + sat_min
 
-print("\nOPTIMIZATION STATUS")
-print(f"Success: {result.success}")
-print(f"Message: {result.message}")
-print(f"Iterations: {result.nit}")
-print(f"Function evaluations: {result.nfev}")
+    # Sort parameters together so membership columns match output prototypes.
+    order = np.argsort(prototypes_sat)
+    prototypes_sat = prototypes_sat[order]
+    prototypes_normalized = prototypes_normalized[order]
+    prototype_scores = prototype_scores[order]
+
+    M = calculate_membership(X_final, prototypes_normalized, alpha)
+    Y_hat = np.sum(M * prototype_scores[None, :], axis=1)
+    predicted_admission = np.where(Y_hat >= PREDICTION_THRESHOLD, "Yes", "No")
+
+    Lz = fairness_loss(M, protected_final)
+    Lx = reconstruction_loss(X_final, M, prototypes_normalized)
+    Ly = classification_loss(Y_final, M, prototype_scores)
+    total_loss = selected_az * Lz + selected_ax * Lx + selected_ay * Ly
+
+    prototype_df = pd.DataFrame({
+        "Prototype": np.arange(1, K + 1),
+        "SAT": prototypes_sat,
+        "Admission_Score": prototype_scores,
+        "Alpha": alpha,
+        "Az": selected_az,
+        "Ax": selected_ax,
+        "Ay": selected_ay,
+    })
+    prototype_path = PROTOTYPE_OUTPUT_CSV.format(criterion=criterion)
+    prototype_df.to_csv(prototype_path, index=False)
+
+    representation_df = final_df[["ID", GENDER_COL, SAT_COL, ADMISSION_COL]].copy()
+    for k in range(K):
+        representation_df[f"v{k + 1}"] = M[:, k]
+    representation_df["LFR_Score"] = Y_hat
+    representation_df["Predicted_Admission"] = predicted_admission
+    representation_path = REPRESENTATION_OUTPUT_CSV.format(criterion=criterion)
+    representation_df.to_csv(representation_path, index=False)
+
+    print("\n" + "=" * 72)
+    print(f"FINAL LFR MODEL: {criterion}")
+    print("=" * 72)
+    print(prototype_df.to_string(index=False))
+    male_distribution = M[~protected_final].mean(axis=0)
+    female_distribution = M[protected_final].mean(axis=0)
+    print("\nGROUP PROTOTYPE DISTRIBUTIONS")
+    for k in range(K):
+        print(
+            f"Prototype {k + 1}: Male={male_distribution[k]:.4f}, "
+            f"Female={female_distribution[k]:.4f}"
+        )
+
+    final_accuracy, final_discrimination, final_delta = performance_metrics(
+        Y_final, protected_final, Y_hat, PREDICTION_THRESHOLD
+    )
+    print("\nFINAL LOSSES AND METRICS (ON DATA USED FOR FINAL FIT)")
+    print(f"Fairness loss Lz:       {Lz:.6f}")
+    print(f"Reconstruction loss Lx: {Lx:.6f}")
+    print(f"Classification loss Ly: {Ly:.6f}")
+    print(f"Weighted total:         {total_loss:.6f}")
+    print(f"Accuracy:               {final_accuracy:.6f}")
+    print(f"Discrimination:         {final_discrimination:.6f}")
+    print(f"Delta:                  {final_delta:.6f}")
+    print("\nOPTIMIZATION STATUS")
+    print(f"Success: {result.success}")
+    print(f"Message: {result.message}")
+    print(f"Iterations: {result.nit}")
+    print(f"Function evaluations: {result.nfev}")
+    print(f"Saved prototypes to: {prototype_path}")
+    print(f"Saved representations to: {representation_path}")
 
 print(f"\nClassification threshold: {PREDICTION_THRESHOLD:.2f}")
 print(f"Saved grid-search results to: {WEIGHT_SEARCH_OUTPUT_CSV}")
-print(f"Saved prototypes to: {PROTOTYPE_OUTPUT_CSV}")
-print(f"Saved representations to: {REPRESENTATION_OUTPUT_CSV}")

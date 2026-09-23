@@ -7,13 +7,13 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = r"lfr4-weights\5-representations_4k.csv"
+CSV_PATH = r"lfr5-newpipeline\1-synthetic_data_240.csv"
 # CSV_PATH = "lfr-8prototypes/4-representations-lbfgs.csv"
 
 # Column names
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
-ADMISSION_COL = "Predicted_Admission" # Admission or Predicted_Admission
+ADMISSION_COL = "Admission" # Admission or Predicted_Admission
 
 # SAT axis
 SAT_MIN = 350
