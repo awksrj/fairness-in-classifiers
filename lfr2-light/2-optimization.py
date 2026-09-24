@@ -18,8 +18,8 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 # ============================================================
 # CONFIGURATION
 # ============================================================
-OUTPUT_DIR = Path("lfr5-newpipeline")
-INPUT_CSV = OUTPUT_DIR / "1-synthetic_data_240.csv"
+OUTPUT_DIR = Path("lfr2-light")
+INPUT_CSV = OUTPUT_DIR / "1-data.csv"
 SPLIT_CSV = OUTPUT_DIR / "2-split_assignments_2d.csv"
 GRID_CSV = OUTPUT_DIR / "4-weight_grid_search_2d.csv"
 SELECTED_CSV = OUTPUT_DIR / "6-selected_model_summary_2d.csv"

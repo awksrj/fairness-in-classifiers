@@ -12,15 +12,25 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = Path(r"lfr2-light\1-data.csv")
-PLOT_TITLE = "LFR"
-
-# Comment out this entire line to hide prototypes (no other changes needed).
-# PROTOTYPES_PATH = Path(r"lfr2-light/3-prototypes_4k_2d_min_discrimination.csv")
+# Comment out either "prototypes_path" entry to hide prototypes in that plot.
+PLOTS = [
+    {
+        "csv_path": Path(r"lfr1-heavy/5-test_representations_4k_2d_min_discrimination.csv"),
+        "prototypes_path": Path(r"lfr1-heavy/3-prototypes_4k_2d_min_discrimination.csv"),
+        "output_path": Path(r"lfr1-heavy/plots/1-result-mindisc.png"),
+        "title": "Admission Outcomes: Minimum Discrimination",
+    },
+    {
+        "csv_path": Path(r"lfr1-heavy/5-test_representations_4k_2d_max_delta.csv"),
+        "prototypes_path": Path(r"lfr1-heavy/3-prototypes_4k_2d_max_delta.csv"),
+        "output_path": Path(r"lfr1-heavy/plots/2-result-maxdelta.png"),
+        "title": "Admission Outcomes: Maximum Delta",
+    },
+]
 
 GENDER_COL = "Gender"
 SAT_COL = "SAT"
-ADMISSION_COL = "Admission"  # Or "Admission"
+ADMISSION_COL = "Predicted_Admission"  # Or "Admission"
 
 SAT_MIN = 350
 SAT_MAX = 1700
@@ -55,12 +65,11 @@ def load_prototypes(path):
     return prototypes
 
 
-def main():
-    # Removing the configuration line above sets this to None.
-    prototype_path = globals().get("PROTOTYPES_PATH")
+def plot_result(config):
+    prototype_path = config.get("prototypes_path")
     prototypes = load_prototypes(prototype_path) if prototype_path is not None else None
 
-    plot_df = pd.read_csv(CSV_PATH).copy()
+    plot_df = pd.read_csv(config["csv_path"]).copy()
     plot_df["x"] = plot_df[GENDER_COL].map({"M": 0, "F": 1})
     if plot_df["x"].isna().any():
         raise ValueError("Gender must contain only M and F")
@@ -139,7 +148,7 @@ def main():
     ax.set_xlim(-0.4, 1.4)
     ax.set_xlabel("Gender (prototype x = gender coordinate)")
     ax.set_ylabel("SAT Score")
-    ax.set_title(PLOT_TITLE)
+    ax.set_title(config["title"])
     legend_elements = [
         Line2D([0], [0], marker="o", color="w", label="Admission: Yes", markerfacecolor="blue", markeredgecolor="black", markersize=9),
         Line2D([0], [0], marker="o", color="w", label="Admission: No", markerfacecolor="red", markeredgecolor="black", markersize=9),
@@ -150,7 +159,18 @@ def main():
     ax.legend(handles=legend_elements, loc="best")
     ax.grid(axis="y", linestyle=":", alpha=0.4)
     fig.tight_layout()
+    output_path = config["output_path"]
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=200, bbox_inches="tight")
+    print(f"Saved plot to: {output_path}")
     plt.show()
+    plt.close(fig)
+
+
+def main():
+    for config in PLOTS:
+        print(f"Plotting: {config['title']}")
+        plot_result(config)
 
 
 if __name__ == "__main__":
