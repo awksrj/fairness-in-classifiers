@@ -12,7 +12,7 @@ from matplotlib.lines import Line2D
 # CONFIGURATION
 # ============================================================
 
-CSV_PATH = Path(r"lfr2-light\1-data.csv")
+CSV_PATH = Path(r"lfr2-light\1-training_data.csv")
 PLOT_TITLE = "LFR"
 
 # Comment out this entire line to hide prototypes (no other changes needed).

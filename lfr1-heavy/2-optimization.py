@@ -1,311 +1,382 @@
+"""Two-feature LFR thought experiment with nested model selection.
+
+Run from the project root: python 'Pasted code(10).py'
+The script generates a 240-student dataset if INPUT_CSV does not exist.
+It reserves a test set, selects two models using out-of-fold predictions,
+and fits the selected models on all non-test rows before testing them.
+"""
+
+from pathlib import Path
 import itertools
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from sklearn.model_selection import StratifiedKFold, train_test_split
+
 
 # ============================================================
 # CONFIGURATION
 # ============================================================
-CSV_PATH = "lfr4-weights/1-training_data.csv"
-PROTOTYPE_OUTPUT_CSV = "lfr4-weights/3-prototypes_4k_{criterion}.csv"
-REPRESENTATION_OUTPUT_CSV = "lfr4-weights/5-representations_4k_{criterion}.csv"
-WEIGHT_SEARCH_OUTPUT_CSV = "lfr4-weights/4-weight_grid_search_4k.csv"
-
-GENDER_COL = "Gender"
-SAT_COL = "SAT"
-ADMISSION_COL = "Admission"
+OUTPUT_DIR = Path("lfr1-heavy")
+INPUT_CSV = OUTPUT_DIR / "1-synthetic_data_240.csv"
+TRAINING_CSV = OUTPUT_DIR / "1-training_data.csv"
+SPLIT_CSV = OUTPUT_DIR / "2-split_assignments_2d.csv"
+GRID_CSV = OUTPUT_DIR / "4-weight_grid_search_2d.csv"
+SELECTED_CSV = OUTPUT_DIR / "6-selected_model_summary_2d.csv"
 K = 4
 RANDOM_SEED = 42
-PREDICTION_THRESHOLD = 0.5
+TEST_FRACTION = 0.20
+N_FOLDS = 5
+THRESHOLD = 0.5
+NEAR_THRESHOLD_MARGIN = 0.01
+SAT_MIN, SAT_MAX = 400.0, 1600.0  # Fixed before any split.
 
-# Paper's weight grid, evaluated here on the same toy data used for fitting.
+# Same 30 hyperparameter settings as the paper's search.
 AX = 0.01
-AY_VALUES = [0.1, 0.5, 1.0, 5.0, 10.0]
-AZ_VALUES = [0.0, 0.1, 0.5, 1.0, 5.0, 10.0]
-
-# Run both selection rules on the same 30 fitted candidates.
-SELECTION_CRITERIA = ("min_discrimination", "max_delta")
-MAX_ITER = 5000
+AY_VALUES = (0.1, 0.5, 1.0, 5.0, 10.0)
+AZ_VALUES = (0.0, 0.1, 0.5, 1.0, 5.0, 10.0)
+MAX_ITER = 1200
 EPSILON = 1e-10
 
 
 # ============================================================
-# DATA HELPERS
+# SYNTHETIC DATA AND VALIDATION
 # ============================================================
-def encode_labels(series):
-    encoded = series.map({"Yes": 1.0, "No": 0.0})
-    if encoded.isna().any():
-        bad = sorted(series[encoded.isna()].astype(str).unique())
-        raise ValueError(f"Admission values must be Yes/No; found: {bad}")
-    return encoded.to_numpy(dtype=float)
+def create_synthetic_data(path):
+    """Make six groups of 20/80/20 per gender without duplicated rows.
+
+    The middle groups deliberately have different observed outcomes.
+    This is an experiment design, not a claim about admission fairness.
+    """
+    rng = np.random.default_rng(RANDOM_SEED)
+    rows = []
+    for gender in ("M", "F"):
+        groups = (
+            ("High", 1550, 1600, 20, "Yes"),
+            ("Middle", 800, 900, 80, "Yes") if gender == "M"
+            else ("Middle", 1200, 1300, 80, "No"),
+            ("Low", 400, 500, 20, "No"),
+        )
+        for band, lower, upper, count, admission in groups:
+            # Unique within a subgroup: repeated exact SAT rows cannot leak
+            # between train, validation, and test subsets.
+            scores = rng.choice(np.arange(lower, upper + 1), size=count, replace=False)
+            for score in scores:
+                rows.append((gender, int(score), admission, band))
+    rng.shuffle(rows)
+    frame = pd.DataFrame(rows, columns=["Gender", "SAT", "Admission", "Band"])
+    frame.insert(0, "ID", np.arange(1, len(frame) + 1))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_csv(path, index=False)
+    return frame
 
 
-def normalize_sat(values, sat_min, sat_max):
-    if sat_max <= sat_min:
-        raise ValueError("SAT_MAX must be greater than SAT_MIN.")
-    return (np.asarray(values, dtype=float) - sat_min) / (sat_max - sat_min)
+def load_data(path):
+    if not path.exists():
+        print(f"Generating the synthetic dataset: {path}")
+        create_synthetic_data(path)
+    frame = pd.read_csv(path)
+    required = {"ID", "Gender", "SAT", "Admission"}
+    if required - set(frame.columns):
+        raise ValueError(f"Missing columns: {sorted(required - set(frame.columns))}")
+    if not frame.Gender.isin(["M", "F"]).all():
+        raise ValueError("Gender must contain only M and F.")
+    if not frame.Admission.isin(["Yes", "No"]).all():
+        raise ValueError("Admission must contain only Yes and No.")
+    if not frame.ID.is_unique:
+        raise ValueError("Every row needs a unique ID.")
+    if frame[["Gender", "SAT"]].duplicated().any():
+        raise ValueError(
+            "Repeated (Gender, SAT) rows would leak across folds. "
+            "Use distinct SAT values per gender or split repeated rows together."
+        )
+    sat = pd.to_numeric(frame.SAT, errors="raise")
+    if sat.isna().any() or (~sat.between(SAT_MIN, SAT_MAX)).any():
+        raise ValueError(f"SAT must be between {SAT_MIN:g} and {SAT_MAX:g}.")
+    return frame.reset_index(drop=True)
+
+
+def strata(frame):
+    """Stratify by gender, outcome, and SAT band (six designed groups)."""
+    if "Band" in frame.columns:
+        bands = frame.Band.astype(str)
+    else:
+        # Also works for another dataset with no Band column.
+        bands = pd.cut(
+            frame.SAT, [SAT_MIN - 1, 650, 1050, 1400, SAT_MAX],
+            labels=["Low", "Male-middle", "Female-middle", "High"],
+        ).astype(str)
+    return frame.Gender.astype(str) + "|" + frame.Admission.astype(str) + "|" + bands
+
+
+def features(frame):
+    """SAT and Gender are both inputs; Gender is also used for group loss."""
+    sat = (frame.SAT.to_numpy(dtype=float) - SAT_MIN) / (SAT_MAX - SAT_MIN)
+    gender = frame.Gender.eq("F").to_numpy(dtype=float)
+    X = np.column_stack((sat, gender))
+    Y = frame.Admission.eq("Yes").to_numpy(dtype=float)
+    return X, Y, gender.astype(bool)
 
 
 # ============================================================
-# LFR MODEL AND LOSSES
+# TWO-FEATURE LFR
 # ============================================================
-def calculate_membership(X, prototypes, alpha):
-    """M_nk = P(Z = k | x_n)."""
-    distances = alpha * (X[:, None] - prototypes[None, :]) ** 2
+def unpack(params):
+    # First K*2: prototype feature coordinates; next K: outcome scores;
+    # final 2: per-feature distance weights [SAT, Gender].
+    prototypes = params[:2 * K].reshape(K, 2)
+    scores = params[2 * K:3 * K]
+    alphas = params[3 * K:3 * K + 2]
+    return prototypes, scores, alphas
+
+
+def membership(X, prototypes, alphas):
+    distances = np.sum(alphas[None, None, :] * (X[:, None, :] - prototypes[None, :, :]) ** 2, axis=2)
     logits = -distances
     logits -= logits.max(axis=1, keepdims=True)
-    exp_logits = np.exp(logits)
-    return exp_logits / (exp_logits.sum(axis=1, keepdims=True) + EPSILON)
+    exponentials = np.exp(logits)
+    return exponentials / exponentials.sum(axis=1, keepdims=True)
 
 
-def fairness_loss(M, protected):
-    """Lz = sum_k |mean(M_k|protected) - mean(M_k|unprotected)|."""
-    protected = np.asarray(protected, dtype=bool)
-    if protected.sum() == 0 or (~protected).sum() == 0:
-        raise ValueError("Fairness loss requires both protected groups.")
-    return np.abs(
-        M[protected].mean(axis=0) - M[~protected].mean(axis=0)
-    ).sum()
+def loss_terms(X, Y, protected, prototypes, scores, alphas):
+    M = membership(X, prototypes, alphas)
+    Lz = np.abs(M[protected].mean(axis=0) - M[~protected].mean(axis=0)).sum()
+    reconstructed = M @ prototypes
+    squared_error = np.mean((X - reconstructed) ** 2, axis=0)
+    # Each feature contributes its mean squared error; expose both terms.
+    Lx_sat, Lx_gender = squared_error
+    Lx = Lx_sat + Lx_gender
+    predicted = np.clip(M @ scores, EPSILON, 1.0 - EPSILON)
+    Ly = -np.mean(Y * np.log(predicted) + (1 - Y) * np.log(1 - predicted))
+    return Lz, Lx, Ly, Lx_sat, Lx_gender
 
 
-def reconstruction_loss(X, M, prototypes):
-    X_hat = np.sum(M * prototypes[None, :], axis=1)
-    return np.mean((X - X_hat) ** 2)
-
-
-def classification_loss(Y, M, prototype_scores):
-    Y_hat = np.sum(M * prototype_scores[None, :], axis=1)
-    Y_hat = np.clip(Y_hat, EPSILON, 1.0 - EPSILON)
-    return -np.mean(Y * np.log(Y_hat) + (1.0 - Y) * np.log(1.0 - Y_hat))
-
-
-def unpack_params(params):
-    return params[:K], params[K:2 * K], params[-1]
-
-
-def make_initial_params(seed):
+def initial_parameters(seed):
     rng = np.random.default_rng(seed)
-    prototypes = np.linspace(0.05, 0.95, K)
-    prototypes = np.clip(prototypes + rng.normal(0, 0.01, K), 0.0, 1.0)
+    sat_coordinates = np.clip(np.linspace(0.05, 0.95, K) + rng.normal(0, 0.01, K), 0, 1)
+    gender_coordinates = rng.uniform(0.25, 0.75, K)
+    prototypes = np.column_stack((sat_coordinates, gender_coordinates))
     scores = rng.uniform(0.25, 0.75, K)
-    return np.concatenate([prototypes, scores, [10.0]])
+    return np.concatenate((prototypes.ravel(), scores, [10.0, 1.0]))
 
 
-BOUNDS = (
-    [(0.0, 1.0) for _ in range(K)]
-    + [(0.0, 1.0) for _ in range(K)]
-    + [(0.01, 100.0)]
-)
+BOUNDS = [(0, 1)] * (3 * K) + [(0.01, 100.0)] * 2
 
 
-def fit_lfr(X, Y, protected, az, ax, ay, initial_params):
-    """Fit one LFR model for one (Az, Ax, Ay) configuration."""
+def fit_model(X, Y, protected, az, ay, initial):
     def objective(params):
-        prototypes, scores, alpha = unpack_params(params)
-        M = calculate_membership(X, prototypes, alpha)
-        return (
-            az * fairness_loss(M, protected)
-            + ax * reconstruction_loss(X, M, prototypes)
-            + ay * classification_loss(Y, M, scores)
-        )
+        prototypes, scores, alphas = unpack(params)
+        Lz, Lx, Ly, _, _ = loss_terms(X, Y, protected, prototypes, scores, alphas)
+        return az * Lz + AX * Lx + ay * Ly
 
     return minimize(
-        objective,
-        x0=initial_params.copy(),
-        method="L-BFGS-B",
-        bounds=BOUNDS,
-        options={"maxiter": MAX_ITER, "ftol": 1e-12, "gtol": 1e-8, "maxls": 50},
+        objective, initial.copy(), method="L-BFGS-B", bounds=BOUNDS,
+        options={"maxiter": MAX_ITER, "ftol": 1e-10, "maxls": 50},
     )
 
 
-def predict_scores(X, params):
-    prototypes, scores, alpha = unpack_params(params)
-    M = calculate_membership(X, prototypes, alpha)
-    return np.sum(M * scores[None, :], axis=1)
+def predict(X, params):
+    prototypes, scores, alphas = unpack(params)
+    M = membership(X, prototypes, alphas)
+    return M @ scores, M
 
 
-def performance_metrics(Y, protected, scores, threshold):
-    predictions = (scores >= threshold).astype(float)
-    accuracy = np.mean(predictions == Y)
-    protected = np.asarray(protected, dtype=bool)
-    protected_rate = predictions[protected].mean()
-    unprotected_rate = predictions[~protected].mean()
-    discrimination = abs(protected_rate - unprotected_rate)
-    return accuracy, discrimination, accuracy - discrimination
+def metrics(Y, protected, scores):
+    yes = scores >= THRESHOLD
+    male_rate = float(yes[~protected].mean())
+    female_rate = float(yes[protected].mean())
+    accuracy = float(np.mean(yes == Y))
+    discrimination = abs(male_rate - female_rate)
+    return {
+        "Accuracy": accuracy,
+        "Discrimination": discrimination,
+        "Delta": accuracy - discrimination,
+        "Male_Yes_Rate": male_rate,
+        "Female_Yes_Rate": female_rate,
+        "Mean_Score_Gap": float(abs(scores[~protected].mean() - scores[protected].mean())),
+        "Near_Threshold_Count": int(np.sum(np.abs(scores - THRESHOLD) <= NEAR_THRESHOLD_MARGIN)),
+    }
+
+
+def score_on_sat_grid(params, criterion, path):
+    # Counterfactual comparison: the SAME SAT scores for both genders.
+    sat_grid = np.arange(int(SAT_MIN), int(SAT_MAX) + 1, 10)
+    rows = []
+    for sat in sat_grid:
+        for gender, binary in (("M", 0.0), ("F", 1.0)):
+            X_one = np.array([[(sat - SAT_MIN) / (SAT_MAX - SAT_MIN), binary]])
+            score = float(predict(X_one, params)[0][0])
+            rows.append({
+                "Criterion": criterion, "SAT": sat, "Gender": gender,
+                "LFR_Score": score, "Predicted_Admission": "Yes" if score >= THRESHOLD else "No",
+            })
+    pd.DataFrame(rows).to_csv(path, index=False)
 
 
 # ============================================================
-# LOAD ALL DATA (IN-SAMPLE THOUGHT EXPERIMENT)
+# SPLIT TRAINING / VALIDATION FOLDS / INDEPENDENT TEST
 # ============================================================
-df = pd.read_csv(CSV_PATH)
-required = {"ID", GENDER_COL, SAT_COL, ADMISSION_COL}
-if required - set(df.columns):
-    raise ValueError(f"Missing required columns: {sorted(required - set(df.columns))}")
-if (~df[GENDER_COL].isin(["M", "F"])).any():
-    bad = sorted(df.loc[~df[GENDER_COL].isin(["M", "F"]), GENDER_COL].astype(str).unique())
-    raise ValueError(f"Gender values must be M/F; found: {bad}")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+df = load_data(INPUT_CSV)
+stratum = strata(df)
+counts = stratum.value_counts()
+if counts.min() < 7:
+    raise ValueError(
+        "Every Gender x Admission x SAT band needs at least 7 distinct rows "
+        "for the test split and five-fold CV. Smallest count: " + str(counts.min())
+    )
 
-df = df.reset_index(drop=True)
-sat_min = df[SAT_COL].astype(float).min()
-sat_max = df[SAT_COL].astype(float).max()
-X = normalize_sat(df[SAT_COL], sat_min, sat_max)
-Y = encode_labels(df[ADMISSION_COL])
-protected = df[GENDER_COL].eq("F").to_numpy()
-if protected.all() or not protected.any():
-    raise ValueError("The dataset must contain both Male and Female students.")
+pool_idx, test_idx = train_test_split(
+    np.arange(len(df)), test_size=TEST_FRACTION,
+    random_state=RANDOM_SEED, stratify=stratum,
+)
+pool = df.iloc[pool_idx].reset_index(drop=True)
+test = df.iloc[test_idx].reset_index(drop=True)
+# Save the non-test rows used across CV folds and for the final model fit.
+pool[["ID", "Gender", "SAT", "Admission"]].to_csv(TRAINING_CSV, index=False)
+X_pool, Y_pool, protected_pool = features(pool)
+X_test, Y_test, protected_test = features(test)
 
+cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=RANDOM_SEED)
+folds = list(cv.split(X_pool, strata(pool)))
+split_labels = np.full(len(df), "test", dtype=object)
+for fold_number, (_, valid_idx) in enumerate(folds, start=1):
+    split_labels[pool_idx[valid_idx]] = f"cv_fold_{fold_number}"
+split_output = df[["ID", "Gender", "SAT", "Admission"]].copy()
+split_output["Split"] = split_labels
+split_output.to_csv(SPLIT_CSV, index=False)
 
-# ============================================================
-# WEIGHT GRID SEARCH (FIT AND SCORE ON ALL ROWS)
-# ============================================================
 print("=" * 72)
-print("LFR WEIGHT SEARCH — IN-SAMPLE TOY EXPERIMENT")
+print("TWO-FEATURE LFR: SAT + GENDER")
 print("=" * 72)
-print(f"Rows used for both fitting and scoring: {len(df)}")
-print(f"Fixed Ax: {AX}; selection criteria: {', '.join(SELECTION_CRITERIA)}\n")
+print(f"Rows: {len(df)} | non-test pool: {len(pool)} | untouched test: {len(test)}")
+print(f"Five CV folds: {[len(valid) for _, valid in folds]}")
+print(f"Weight combinations: {len(AY_VALUES) * len(AZ_VALUES)}")
 
-initial_params = make_initial_params(RANDOM_SEED)
-search_rows, search_results = [], []
 
+# ============================================================
+# GRID SEARCH USING ONLY OUT-OF-FOLD PREDICTIONS
+# ============================================================
+search_rows = []
 for ay, az in itertools.product(AY_VALUES, AZ_VALUES):
-    search_result = fit_lfr(
-        X, Y, protected, az, AX, ay, initial_params
-    )
-    in_sample_scores = predict_scores(X, search_result.x)
-    accuracy, discrimination, delta = performance_metrics(
-        Y, protected, in_sample_scores, PREDICTION_THRESHOLD
-    )
+    out_of_fold_scores = np.empty(len(pool))
+    fold_success = []
+    fold_objectives = []
+    for fold_number, (train_idx, valid_idx) in enumerate(folds, start=1):
+        fit = fit_model(
+            X_pool[train_idx], Y_pool[train_idx], protected_pool[train_idx],
+            az, ay, initial_parameters(RANDOM_SEED),
+        )
+        if not np.isfinite(fit.fun):
+            raise RuntimeError(f"Nonfinite objective: Az={az}, Ay={ay}, fold={fold_number}")
+        out_of_fold_scores[valid_idx] = predict(X_pool[valid_idx], fit.x)[0]
+        fold_success.append(bool(fit.success))
+        fold_objectives.append(float(fit.fun))
+    measurements = metrics(Y_pool, protected_pool, out_of_fold_scores)
     search_rows.append({
-        "Az": az,
-        "Ax": AX,
-        "Ay": ay,
-        "In_Sample_Accuracy": accuracy,
-        "In_Sample_Discrimination": discrimination,
-        "In_Sample_Delta": delta,
-        "Training_Objective": search_result.fun,
-        "Optimization_Success": search_result.success,
-        "Iterations": search_result.nit,
+        "Az": az, "Ax": AX, "Ay": ay,
+        **{f"CV_{name}": value for name, value in measurements.items()},
+        "All_Folds_Converged": all(fold_success),
+        "Mean_Fold_Objective": float(np.mean(fold_objectives)),
     })
-    search_results.append(search_result)
     print(
-        f"Az={az:>4}, Ax={AX:.2f}, Ay={ay:>4} | accuracy={accuracy:.4f}, "
-        f"discrimination={discrimination:.4f}, delta={delta:.4f}"
+        f"Az={az:>4}, Ay={ay:>4} | CV accuracy={measurements['Accuracy']:.4f}, "
+        f"discrimination={measurements['Discrimination']:.4f}, "
+        f"delta={measurements['Delta']:.4f}"
     )
 
-search_df = pd.DataFrame(search_rows)
-
-# Select two winners from the SAME grid; ties prefer the secondary metric,
-# then smaller Az and Ay. Both rules may select the same configuration.
-rankings = {
+search = pd.DataFrame(search_rows)
+# Deterministic tie-breaking on discrete Yes/No metrics.
+ranking_rules = {
     "min_discrimination": (
-        ["In_Sample_Discrimination", "In_Sample_Accuracy", "Az", "Ay"],
+        ["CV_Discrimination", "CV_Accuracy", "Az", "Ay"],
         [True, False, True, True],
     ),
     "max_delta": (
-        ["In_Sample_Delta", "In_Sample_Discrimination", "Az", "Ay"],
+        ["CV_Delta", "CV_Discrimination", "Az", "Ay"],
         [False, True, True, True],
     ),
 }
-selected_indices = {}
-for criterion in SELECTION_CRITERIA:
-    columns, ascending = rankings[criterion]
-    ranked = search_df.sort_values(columns, ascending=ascending, kind="stable")
-    selected_indices[criterion] = ranked.index[0]
-    search_df[f"Selected_{criterion}"] = search_df.index == selected_indices[criterion]
-
-search_df.to_csv(WEIGHT_SEARCH_OUTPUT_CSV, index=False)
-
-print("\nSELECTED WEIGHTS (IN-SAMPLE)")
-for criterion, index in selected_indices.items():
-    row = search_df.loc[index]
-    print(
-        f"{criterion}: Az={row['Az']}, Ax={row['Ax']}, Ay={row['Ay']} | "
-        f"accuracy={row['In_Sample_Accuracy']:.4f}, "
-        f"discrimination={row['In_Sample_Discrimination']:.4f}, "
-        f"delta={row['In_Sample_Delta']:.4f}"
-    )
+selected = {}
+for criterion, (columns, ascending) in ranking_rules.items():
+    ranked = search.sort_values(columns, ascending=ascending, kind="stable")
+    selected[criterion] = int(ranked.index[0])
+    search[f"Selected_{criterion}"] = search.index == selected[criterion]
+search.to_csv(GRID_CSV, index=False)
 
 
 # ============================================================
-# SAVE BOTH SELECTED MODELS WITHOUT REFITTING
+# FIT SELECTED WEIGHTS ON NON-TEST POOL; EVALUATE TEST ONCE
 # ============================================================
-for criterion in SELECTION_CRITERIA:
-    selected_index = selected_indices[criterion]
-    row = search_df.loc[selected_index]
-    selected_az, selected_ax, selected_ay = (
-        float(row["Az"]), float(row["Ax"]), float(row["Ay"])
-    )
-    result = search_results[selected_index]
+final_fits = {}
+summary_rows = []
+for criterion, selected_idx in selected.items():
+    candidate = search.loc[selected_idx]
+    az, ay = float(candidate.Az), float(candidate.Ay)
+    if selected_idx not in final_fits:
+        final_fits[selected_idx] = fit_model(
+            X_pool, Y_pool, protected_pool, az, ay,
+            initial_parameters(RANDOM_SEED),
+        )
+    fit = final_fits[selected_idx]
+    if not np.isfinite(fit.fun):
+        raise RuntimeError(f"Nonfinite final objective for {criterion}")
+    prototypes, scores, alphas = unpack(fit.x)
 
-    prototypes_normalized, prototype_scores, alpha = unpack_params(result.x)
-    prototypes_sat = prototypes_normalized * (sat_max - sat_min) + sat_min
+    # Sort all prototype parameters together to preserve v1 ... vK meaning.
+    order = np.argsort(prototypes[:, 0])
+    prototypes, scores = prototypes[order], scores[order]
+    params_sorted = np.concatenate((prototypes.ravel(), scores, alphas))
 
-    # Sort parameters together so membership columns match output prototypes.
-    order = np.argsort(prototypes_sat)
-    prototypes_sat = prototypes_sat[order]
-    prototypes_normalized = prototypes_normalized[order]
-    prototype_scores = prototype_scores[order]
-
-    M = calculate_membership(X, prototypes_normalized, alpha)
-    Y_hat = np.sum(M * prototype_scores[None, :], axis=1)
-    predicted_admission = np.where(Y_hat >= PREDICTION_THRESHOLD, "Yes", "No")
-
-    Lz = fairness_loss(M, protected)
-    Lx = reconstruction_loss(X, M, prototypes_normalized)
-    Ly = classification_loss(Y, M, prototype_scores)
-    total_loss = selected_az * Lz + selected_ax * Lx + selected_ay * Ly
-
-    prototype_df = pd.DataFrame({
+    prototype_table = pd.DataFrame({
         "Prototype": np.arange(1, K + 1),
-        "SAT": prototypes_sat,
-        "Admission_Score": prototype_scores,
-        "Alpha": alpha,
-        "Az": selected_az,
-        "Ax": selected_ax,
-        "Ay": selected_ay,
+        "SAT": prototypes[:, 0] * (SAT_MAX - SAT_MIN) + SAT_MIN,
+        "Gender_Coordinate": prototypes[:, 1],
+        "Admission_Score": scores,
+        "Alpha_SAT": alphas[0], "Alpha_Gender": alphas[1],
+        "Az": az, "Ax": AX, "Ay": ay,
     })
-    prototype_path = PROTOTYPE_OUTPUT_CSV.format(criterion=criterion)
-    prototype_df.to_csv(prototype_path, index=False)
+    prototype_path = OUTPUT_DIR / f"3-prototypes_4k_2d_{criterion}.csv"
+    prototype_table.to_csv(prototype_path, index=False)
 
-    representation_df = df[["ID", GENDER_COL, SAT_COL, ADMISSION_COL]].copy()
+    test_scores, M_test = predict(X_test, params_sorted)
+    representation = test[["ID", "Gender", "SAT", "Admission"]].copy()
     for k in range(K):
-        representation_df[f"v{k + 1}"] = M[:, k]
-    representation_df["LFR_Score"] = Y_hat
-    representation_df["Predicted_Admission"] = predicted_admission
-    representation_path = REPRESENTATION_OUTPUT_CSV.format(criterion=criterion)
-    representation_df.to_csv(representation_path, index=False)
+        representation[f"v{k + 1}"] = M_test[:, k]
+    representation["LFR_Score"] = test_scores
+    representation["Predicted_Admission"] = np.where(test_scores >= THRESHOLD, "Yes", "No")
+    representation_path = OUTPUT_DIR / f"5-test_representations_4k_2d_{criterion}.csv"
+    representation.to_csv(representation_path, index=False)
+
+    grid_path = OUTPUT_DIR / f"7-same_sat_gender_grid_2d_{criterion}.csv"
+    score_on_sat_grid(params_sorted, criterion, grid_path)
+
+    cv_metrics = {key.removeprefix("CV_"): candidate[key] for key in search.columns if key.startswith("CV_")}
+    test_metrics = metrics(Y_test, protected_test, test_scores)
+    Lz, Lx, Ly, Lx_sat, Lx_gender = loss_terms(X_pool, Y_pool, protected_pool, prototypes, scores, alphas)
+    summary_rows.append({
+        "Criterion": criterion, "Az": az, "Ax": AX, "Ay": ay,
+        **{f"CV_{key}": value for key, value in cv_metrics.items()},
+        **{f"Test_{key}": value for key, value in test_metrics.items()},
+        "Fit_Lz": Lz, "Fit_Lx": Lx, "Fit_Lx_SAT": Lx_sat,
+        "Fit_Lx_Gender": Lx_gender, "Fit_Ly": Ly,
+        "Weighted_Lz": az * Lz, "Weighted_Lx": AX * Lx, "Weighted_Ly": ay * Ly,
+        "Final_Converged": bool(fit.success),
+    })
 
     print("\n" + "=" * 72)
-    print(f"FINAL LFR MODEL: {criterion}")
+    print(f"SELECTED BY {criterion.upper()}: Az={az}, Ax={AX}, Ay={ay}")
     print("=" * 72)
-    print(prototype_df.to_string(index=False))
-    male_distribution = M[~protected].mean(axis=0)
-    female_distribution = M[protected].mean(axis=0)
-    print("\nGROUP PROTOTYPE DISTRIBUTIONS")
-    for k in range(K):
-        print(
-            f"Prototype {k + 1}: Male={male_distribution[k]:.4f}, "
-            f"Female={female_distribution[k]:.4f}"
-        )
+    print(prototype_table.to_string(index=False))
+    print("CV (out of fold):", {name: round(cv_metrics[name], 4) for name in ("Accuracy", "Discrimination", "Delta")})
+    print("TEST (untouched):", {name: round(test_metrics[name], 4) for name in ("Accuracy", "Discrimination", "Delta")})
+    print(f"Fit losses: Lz={Lz:.5f}, Lx={Lx:.5f} (SAT={Lx_sat:.5f}, Gender={Lx_gender:.5f}), Ly={Ly:.5f}")
+    print(f"Scores near 0.5 on test (±{NEAR_THRESHOLD_MARGIN}): {test_metrics['Near_Threshold_Count']}")
+    print(f"Saved: {prototype_path}, {representation_path}, {grid_path}")
 
-    final_accuracy, final_discrimination, final_delta = performance_metrics(
-        Y, protected, Y_hat, PREDICTION_THRESHOLD
-    )
-    print("\nIN-SAMPLE LOSSES AND METRICS (ON DATA USED FOR FITTING)")
-    print(f"Fairness loss Lz:       {Lz:.6f}")
-    print(f"Reconstruction loss Lx: {Lx:.6f}")
-    print(f"Classification loss Ly: {Ly:.6f}")
-    print(f"Weighted total:         {total_loss:.6f}")
-    print(f"Accuracy:               {final_accuracy:.6f}")
-    print(f"Discrimination:         {final_discrimination:.6f}")
-    print(f"Delta:                  {final_delta:.6f}")
-    print("\nOPTIMIZATION STATUS")
-    print(f"Success: {result.success}")
-    print(f"Message: {result.message}")
-    print(f"Iterations: {result.nit}")
-    print(f"Function evaluations: {result.nfev}")
-    print(f"Saved prototypes to: {prototype_path}")
-    print(f"Saved representations to: {representation_path}")
-
-print(f"\nClassification threshold: {PREDICTION_THRESHOLD:.2f}")
-print(f"Saved grid-search results to: {WEIGHT_SEARCH_OUTPUT_CSV}")
+pd.DataFrame(summary_rows).to_csv(SELECTED_CSV, index=False)
+print(f"\nSaved training data ({len(pool)} rows): {TRAINING_CSV}")
+print(f"\nSaved split assignments: {SPLIT_CSV}")
+print(f"Saved all weight results: {GRID_CSV}")
+print(f"Saved selected-model summary: {SELECTED_CSV}")

@@ -15,15 +15,15 @@ from matplotlib.lines import Line2D
 # Comment out either "prototypes_path" entry to hide prototypes in that plot.
 PLOTS = [
     {
-        "csv_path": Path(r"lfr1-heavy/5-test_representations_4k_2d_min_discrimination.csv"),
-        "prototypes_path": Path(r"lfr1-heavy/3-prototypes_4k_2d_min_discrimination.csv"),
-        "output_path": Path(r"lfr1-heavy/plots/1-result-mindisc.png"),
+        "csv_path": Path(r"lfr2-light/5-test_representations_4k_2d_min_discrimination.csv"),
+        "prototypes_path": Path(r"lfr2-light/3-prototypes_4k_2d_min_discrimination.csv"),
+        "output_path": Path(r"lfr2-light/plots/1-result-mindisc.png"),
         "title": "Admission Outcomes: Minimum Discrimination",
     },
     {
-        "csv_path": Path(r"lfr1-heavy/5-test_representations_4k_2d_max_delta.csv"),
-        "prototypes_path": Path(r"lfr1-heavy/3-prototypes_4k_2d_max_delta.csv"),
-        "output_path": Path(r"lfr1-heavy/plots/2-result-maxdelta.png"),
+        "csv_path": Path(r"lfr2-light/5-test_representations_4k_2d_max_delta.csv"),
+        "prototypes_path": Path(r"lfr2-light/3-prototypes_4k_2d_max_delta.csv"),
+        "output_path": Path(r"lfr2-light/plots/2-result-maxdelta.png"),
         "title": "Admission Outcomes: Maximum Delta",
     },
 ]

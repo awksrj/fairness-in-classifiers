@@ -20,6 +20,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 # ============================================================
 OUTPUT_DIR = Path("lfr2-light")
 INPUT_CSV = OUTPUT_DIR / "1-data.csv"
+TRAINING_CSV = OUTPUT_DIR / "1-training_data.csv"
 SPLIT_CSV = OUTPUT_DIR / "2-split_assignments_2d.csv"
 GRID_CSV = OUTPUT_DIR / "4-weight_grid_search_2d.csv"
 SELECTED_CSV = OUTPUT_DIR / "6-selected_model_summary_2d.csv"
@@ -232,6 +233,8 @@ pool_idx, test_idx = train_test_split(
 )
 pool = df.iloc[pool_idx].reset_index(drop=True)
 test = df.iloc[test_idx].reset_index(drop=True)
+# Save the non-test rows used across CV folds and for the final model fit.
+pool[["ID", "Gender", "SAT", "Admission"]].to_csv(TRAINING_CSV, index=False)
 X_pool, Y_pool, protected_pool = features(pool)
 X_test, Y_test, protected_test = features(test)
 
@@ -372,7 +375,23 @@ for criterion, selected_idx in selected.items():
     print(f"Scores near 0.5 on test (±{NEAR_THRESHOLD_MARGIN}): {test_metrics['Near_Threshold_Count']}")
     print(f"Saved: {prototype_path}, {representation_path}, {grid_path}")
 
+    print("\nDEBUG FIRST TEST POINT")
+    print("Student:", test.iloc[0][["ID", "Gender", "SAT", "Admission"]].to_dict())
+    print("Prototypes:\n", prototypes)
+    print("Alphas:", alphas)
+
+    x = X_test[0]
+    distances = np.sum(
+        alphas[None, :] * (x[None, :] - prototypes) ** 2,
+        axis=1
+    )
+
+    print("Normalized X:", x)
+    print("Distances:", distances)
+    print("Membership:", M_test[0])
+
 pd.DataFrame(summary_rows).to_csv(SELECTED_CSV, index=False)
+print(f"\nSaved training data ({len(pool)} rows): {TRAINING_CSV}")
 print(f"\nSaved split assignments: {SPLIT_CSV}")
 print(f"Saved all weight results: {GRID_CSV}")
 print(f"Saved selected-model summary: {SELECTED_CSV}")
