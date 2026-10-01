@@ -1,0 +1,11 @@
+Feature,Coefficient
+categorical__Gender_Male,0.7083954974689568
+numeric__SAT,0.6329677596411081
+categorical__Hobby_Soccer,0.5946445771722277
+categorical__Major_Computer Science,0.51702639061141
+categorical__Major_Engineering,0.4772117050732347
+categorical__Hobby_Gaming,0.4433453252126336
+categorical__Hobby_Dance,0.35243306297427296
+numeric__GPA,0.29960403197355845
+categorical__Major_Humanities,-0.3057812433322413
+interpreted__Gender_Female_relative_to_Male,-0.7083954974689568

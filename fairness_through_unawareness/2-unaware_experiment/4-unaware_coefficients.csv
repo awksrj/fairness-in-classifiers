@@ -1,0 +1,9 @@
+Feature,Coefficient
+categorical__Hobby_Soccer,0.832993552862522
+categorical__Major_Computer Science,0.7609568798007192
+categorical__Major_Engineering,0.7113995148595176
+numeric__SAT,0.6330373203113275
+categorical__Hobby_Gaming,0.6245904113657992
+numeric__GPA,0.309625134845063
+categorical__Hobby_Dance,0.30049555042986886
+categorical__Major_Humanities,-0.3275724723326483

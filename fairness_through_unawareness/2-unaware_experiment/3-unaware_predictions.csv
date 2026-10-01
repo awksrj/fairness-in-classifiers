@@ -1,0 +1,251 @@
+ID,Gender,SAT,GPA,Hobby,Major,Actual_Admission,Predicted_Probability,Predicted_Admission,Near_Threshold
+189,Male,1310.5,3.47,Gaming,Engineering,0,0.7330640114554478,1,False
+40,Male,1093.7,3.34,Soccer,Biology,0,0.4103706446914253,0,True
+213,Male,1212.2,3.01,Art,Engineering,1,0.4272329550602933,0,True
+805,Male,1181.1,3.16,Soccer,Biology,0,0.4559428062171249,0,True
+253,Female,1340.0,2.84,Dance,Biology,0,0.4094260824991111,0,True
+449,Female,1495.3,2.97,Dance,Humanities,0,0.48880412026076564,0,True
+315,Male,1285.5,2.89,Soccer,Biology,1,0.5015463387971428,1,True
+750,Female,944.1,2.89,Gaming,Biology,0,0.19364607821564567,0,False
+404,Male,1323.1,2.92,Gaming,Computer Science,1,0.6714725967617163,1,False
+187,Male,1150.2,2.93,Gaming,Computer Science,0,0.5254580191116356,1,True
+129,Female,1523.6,3.43,Art,Humanities,1,0.5206068897737498,1,True
+89,Female,1184.5,3.56,Dance,Computer Science,0,0.5860555183162481,1,True
+839,Female,1171.0,4.0,Dance,Computer Science,1,0.6482512615211472,1,False
+868,Female,1164.0,2.88,Dance,Computer Science,0,0.448149046070024,0,True
+94,Female,1167.7,3.09,Art,Engineering,0,0.4022774586751422,0,True
+504,Male,1385.0,3.18,Soccer,Humanities,0,0.5599894565770313,1,True
+114,Male,1141.7,2.44,Dance,Computer Science,0,0.35429546049146854,0,False
+841,Male,1214.4,2.24,Gaming,Engineering,1,0.4484766353866356,0,True
+407,Female,1250.6,2.89,Dance,Biology,0,0.3426594116309654,0,False
+411,Male,1218.2,3.71,Soccer,Humanities,1,0.5047236319304103,1,True
+574,Male,1079.6,3.17,Soccer,Biology,1,0.369683057135841,0,False
+441,Male,1102.1,3.84,Soccer,Engineering,1,0.6756247259059492,1,False
+884,Female,1101.1,3.0,Dance,Biology,0,0.24795381830529442,0,False
+361,Female,1276.0,3.68,Dance,Humanities,1,0.4188225336899638,0,True
+91,Male,1120.3,3.85,Dance,Computer Science,1,0.5800929241060936,1,True
+64,Female,1236.4,3.58,Dance,Humanities,1,0.3680606976648878,0,False
+413,Female,1023.0,3.32,Soccer,Humanities,1,0.2773340139231859,0,False
+891,Male,1466.1,3.55,Gaming,Biology,1,0.713727185819485,1,False
+784,Male,1019.5,4.0,Gaming,Engineering,1,0.5848254127179141,1,True
+960,Female,1230.4,3.37,Art,Biology,0,0.33538320126559795,0,False
+398,Male,1470.4,3.54,Gaming,Biology,1,0.7154255318449486,1,False
+526,Female,1562.4,3.47,Art,Engineering,0,0.7839704802734455,1,False
+946,Female,1114.6,2.82,Gaming,Computer Science,1,0.4740819494322214,0,True
+17,Male,939.5,2.6,Art,Humanities,0,0.06908405783280301,0,False
+821,Female,837.4,2.74,Art,Computer Science,0,0.1444083005908705,0,False
+158,Male,1295.3,3.81,Soccer,Engineering,0,0.8030204162329062,1,False
+865,Female,1016.0,2.81,Dance,Biology,0,0.17515949292158076,0,False
+472,Male,1290.2,3.68,Soccer,Biology,1,0.6418455349282526,1,False
+323,Male,1308.5,3.14,Art,Humanities,1,0.29016601410648346,0,False
+75,Female,1285.4,3.14,Art,Computer Science,0,0.5277499581397487,1,True
+716,Female,1297.7,4.0,Soccer,Computer Science,1,0.8317680701611828,1,False
+588,Male,1571.5,3.81,Art,Biology,1,0.7008503100405357,1,False
+121,Male,1035.3,3.11,Soccer,Engineering,1,0.4941011790370187,0,True
+911,Male,1188.2,2.92,Gaming,Engineering,0,0.5452605841735133,1,True
+486,Female,973.7,3.43,Dance,Humanities,0,0.1695258188074315,0,False
+958,Female,1047.7,2.48,Art,Humanities,0,0.09129277309519865,0,False
+383,Male,1395.2,3.45,Art,Engineering,1,0.662663215843978,1,False
+864,Male,1199.8,3.43,Soccer,Engineering,1,0.6885354382037164,1,False
+420,Female,1337.2,3.07,Art,Biology,1,0.37431792378693324,0,False
+775,Male,1232.2,3.49,Art,Humanities,1,0.2849703241294624,0,False
+727,Male,1504.6,2.88,Soccer,Biology,1,0.6867121943603666,1,False
+614,Male,1152.2,3.35,Gaming,Computer Science,0,0.6003674681581654,1,False
+667,Female,1271.4,3.29,Dance,Humanities,0,0.3496154537407651,0,False
+680,Male,1265.1,3.32,Gaming,Computer Science,0,0.6879560909564458,1,False
+81,Male,1548.7,3.7,Gaming,Computer Science,1,0.8886587388748834,1,False
+807,Male,1521.3,2.93,Gaming,Computer Science,1,0.8073213983713826,1,False
+226,Female,1196.0,2.5,Soccer,Biology,0,0.35631594354286533,0,False
+599,Female,1166.4,3.79,Gaming,Biology,1,0.502262831191455,1,True
+163,Male,672.5,3.37,Gaming,Computer Science,0,0.21432674584486935,0,False
+409,Female,893.5,2.55,Art,Biology,0,0.0777229576769217,0,False
+852,Male,1396.8,3.02,Dance,Biology,1,0.4912563068796442,0,True
+835,Male,1139.3,3.57,Soccer,Engineering,0,0.6627620832682948,1,False
+990,Male,1193.8,2.56,Soccer,Computer Science,1,0.5508820438816081,1,True
+348,Male,979.6,3.72,Soccer,Computer Science,1,0.5643631904055906,1,True
+9,Female,1240.2,3.51,Soccer,Humanities,1,0.4889839729082756,0,True
+465,Male,1316.6,2.83,Soccer,Engineering,0,0.6870906889262011,1,False
+582,Female,1342.7,2.48,Art,Humanities,0,0.2244236994228558,0,False
+842,Male,1245.8,2.98,Gaming,Biology,1,0.4302706967621913,0,True
+297,Female,1096.1,3.34,Dance,Computer Science,1,0.4686989859714465,0,True
+39,Male,1241.1,4.0,Gaming,Humanities,0,0.5245572062566511,1,True
+312,Female,1239.5,3.08,Art,Biology,0,0.29796657969859075,0,False
+248,Female,1464.1,3.15,Art,Biology,1,0.4995186996093935,0,True
+820,Male,963.2,2.32,Art,Engineering,0,0.15769402602696964,0,False
+824,Female,1157.8,3.75,Gaming,Humanities,1,0.40667382820968145,0,True
+532,Male,1105.2,2.69,Soccer,Computer Science,1,0.49468038982762924,0,True
+928,Female,1366.4,3.07,Art,Biology,0,0.39914602366085133,0,False
+200,Female,1524.3,3.01,Soccer,Biology,1,0.7206415940275988,1,False
+636,Male,1086.3,3.12,Gaming,Computer Science,0,0.5018846558029187,1,True
+871,Male,1141.8,3.39,Gaming,Computer Science,1,0.5982247117572677,1,True
+104,Male,880.5,3.43,Dance,Engineering,0,0.2923002883336115,0,False
+645,Female,1254.2,3.64,Dance,Biology,0,0.4733792402148851,0,True
+982,Female,1205.1,3.0,Art,Computer Science,0,0.4313988620780103,0,True
+912,Female,1449.9,3.06,Dance,Humanities,1,0.46412165781058107,0,True
+580,Male,1370.0,3.26,Gaming,Engineering,1,0.7454785449055022,1,False
+391,Female,1548.4,3.21,Art,Computer Science,0,0.7509886924025767,1,False
+869,Female,1185.1,2.97,Gaming,Humanities,0,0.30299323391763316,0,False
+862,Male,1085.1,3.24,Soccer,Humanities,0,0.31178760168392283,0,False
+551,Female,1048.1,2.59,Art,Biology,0,0.13113938825353147,0,False
+682,Male,955.8,2.51,Soccer,Computer Science,1,0.3352117152094244,0,False
+243,Male,1232.6,2.79,Gaming,Engineering,0,0.5618197850415078,1,True
+575,Female,1108.0,2.72,Art,Biology,0,0.17024245672517396,0,False
+901,Female,1168.1,3.19,Art,Humanities,0,0.20381925519224375,0,False
+146,Male,1600.0,3.58,Gaming,Computer Science,0,0.8980699870129093,1,False
+355,Female,1223.7,3.57,Art,Humanities,0,0.29035167811337526,0,False
+846,Male,1270.2,3.32,Dance,Engineering,1,0.6071189073397748,1,False
+433,Female,1121.9,2.26,Art,Computer Science,0,0.2498554968659688,0,False
+51,Female,1227.5,3.86,Dance,Biology,1,0.48843057719560584,0,True
+558,Male,1126.9,2.74,Gaming,Engineering,0,0.4586054697268205,0,True
+700,Male,1161.5,2.76,Gaming,Engineering,0,0.4930766416551564,0,True
+365,Female,1047.6,2.72,Art,Computer Science,0,0.2612369034825841,0,False
+854,Male,1190.5,3.66,Gaming,Computer Science,1,0.6822699567236414,1,False
+876,Female,1074.2,2.35,Dance,Biology,0,0.1588163133539668,0,False
+565,Female,1203.4,3.18,Gaming,Humanities,0,0.35012083934623783,0,False
+843,Female,1140.1,3.35,Art,Biology,0,0.2646493201030236,0,False
+798,Female,1342.7,2.98,Art,Computer Science,1,0.5506028112489204,1,True
+26,Female,1228.3,3.13,Dance,Engineering,1,0.5374787099998938,1,True
+542,Female,1179.2,3.68,Dance,Biology,1,0.41407013500393974,0,True
+735,Female,1475.1,3.66,Dance,Biology,1,0.6681340121101886,1,False
+722,Female,1376.6,2.42,Art,Computer Science,0,0.48187486089234205,0,True
+229,Female,1056.4,3.39,Soccer,Biology,1,0.3868131976482128,0,False
+470,Male,1374.2,3.46,Gaming,Computer Science,1,0.7826402063812492,1,False
+327,Male,1095.0,2.74,Soccer,Engineering,0,0.4820204062978421,0,True
+926,Male,1429.4,3.48,Dance,Computer Science,1,0.7629930272284685,1,False
+400,Female,1482.6,2.75,Dance,Biology,0,0.5202872958638709,1,True
+549,Female,1112.7,3.45,Dance,Computer Science,0,0.5030456438940103,1,True
+492,Female,1345.5,2.95,Dance,Computer Science,0,0.6206632136748406,1,False
+769,Male,930.2,3.2,Gaming,Engineering,0,0.3670123671776566,0,False
+996,Female,969.7,3.7,Gaming,Humanities,1,0.2520457754841808,0,False
+790,Female,1119.3,3.27,Soccer,Biology,0,0.42060713862395344,0,True
+442,Male,1021.3,3.11,Soccer,Computer Science,0,0.4939394159350941,0,True
+935,Female,1202.2,2.51,Soccer,Biology,0,0.3630700688306821,0,False
+995,Female,1282.9,4.0,Art,Humanities,0,0.4069988047207194,0,True
+964,Male,1042.5,2.75,Gaming,Engineering,0,0.3866237595093113,0,False
+138,Male,1047.9,2.71,Soccer,Computer Science,1,0.44705591266326616,0,True
+987,Male,1131.1,2.6,Soccer,Engineering,0,0.48955280215269015,0,True
+520,Female,1600.0,3.28,Art,Biology,1,0.6405208702133006,1,False
+629,Female,1149.9,3.41,Dance,Computer Science,0,0.529269361573113,1,True
+766,Female,1171.3,3.07,Gaming,Biology,1,0.3812915374275503,0,False
+382,Female,1321.5,2.13,Dance,Biology,0,0.28165237420534694,0,False
+485,Female,1039.8,2.54,Art,Biology,0,0.12388422267026074,0,False
+375,Male,1342.3,3.64,Gaming,Engineering,1,0.7764054249791155,1,False
+93,Male,1406.6,2.12,Soccer,Engineering,0,0.646958433386841,1,False
+783,Male,1558.4,3.01,Soccer,Humanities,1,0.6775112096207719,1,False
+318,Female,1089.1,2.66,Art,Biology,0,0.1552185629396365,0,False
+8,Female,1297.8,2.9,Art,Biology,0,0.3152674552818434,0,False
+817,Female,1196.9,3.18,Gaming,Biology,1,0.4220789579617265,0,True
+831,Female,1310.6,3.76,Dance,Humanities,1,0.4633686594051305,0,True
+931,Female,1073.3,2.76,Dance,Biology,0,0.20109284964970323,0,False
+358,Male,1270.3,3.42,Gaming,Engineering,1,0.6964819281576062,1,False
+598,Male,1482.3,3.37,Soccer,Computer Science,0,0.8597645935120724,1,False
+112,Female,888.5,3.27,Art,Biology,0,0.12121949052286297,0,False
+238,Male,863.2,4.0,Soccer,Computer Science,0,0.5100179722651859,1,True
+573,Female,1149.7,2.77,Art,Engineering,1,0.33458768506119685,0,False
+237,Male,1260.6,2.79,Art,Computer Science,1,0.44372119985223024,0,True
+173,Male,1261.2,3.5,Gaming,Computer Science,1,0.7118259474047033,1,False
+863,Male,1067.9,2.55,Art,Humanities,0,0.10193906412512636,0,False
+502,Male,1233.2,4.0,Gaming,Engineering,1,0.7519333486400327,1,False
+298,Female,1081.9,2.95,Dance,Biology,0,0.2290166792994639,0,False
+88,Female,1278.3,2.95,Art,Humanities,0,0.24275348705738065,0,False
+322,Male,920.8,3.4,Soccer,Biology,1,0.28092027522467694,0,False
+508,Female,1600.0,2.98,Dance,Computer Science,0,0.8063224897470497,1,False
+276,Female,1337.1,3.73,Art,Humanities,1,0.40768764451079875,0,True
+540,Male,1071.8,3.45,Soccer,Engineering,0,0.5862427427999918,1,True
+880,Male,1219.8,2.73,Soccer,Engineering,0,0.5910952653819083,1,True
+516,Male,1049.7,3.17,Gaming,Computer Science,0,0.4779529325155543,0,True
+42,Male,1402.3,3.16,Art,Computer Science,1,0.6328603720733227,1,False
+204,Male,1381.4,3.08,Soccer,Engineering,1,0.767857356622306,1,False
+62,Female,1242.2,3.32,Dance,Biology,0,0.40694939965858956,0,True
+903,Male,1493.0,4.0,Soccer,Humanities,1,0.7703049010622305,1,False
+596,Male,1393.6,3.36,Gaming,Engineering,1,0.7738537947705303,1,False
+307,Male,1285.9,3.2,Dance,Biology,0,0.42433648941793994,0,True
+717,Male,1551.0,2.9,Art,Engineering,0,0.6992600914165679,1,False
+77,Male,1437.7,3.05,Gaming,Computer Science,1,0.771715123189084,1,False
+895,Male,1115.2,3.0,Gaming,Engineering,1,0.4941258372224643,0,True
+616,Female,1414.3,2.91,Dance,Biology,1,0.4874413362089453,0,True
+640,Female,1396.3,2.78,Dance,Biology,0,0.44843342555360144,0,True
+697,Female,1300.6,3.45,Dance,Computer Science,0,0.6650762874814946,1,False
+979,Male,1399.9,4.0,Gaming,Engineering,1,0.8464132932146593,1,False
+350,Male,1249.1,3.37,Gaming,Engineering,1,0.6724114297330098,1,False
+157,Male,1300.0,2.92,Gaming,Biology,0,0.46780924541558583,0,True
+388,Male,1374.8,2.49,Soccer,Engineering,0,0.6800713418722497,1,False
+637,Female,1173.9,2.63,Art,Computer Science,0,0.3428836691996811,0,False
+360,Female,1054.4,3.23,Dance,Computer Science,0,0.4126725106759412,0,True
+154,Male,1143.9,3.67,Gaming,Computer Science,1,0.6466182033739296,1,False
+572,Male,923.5,2.54,Gaming,Engineering,0,0.2616873486077808,0,False
+466,Male,1115.4,3.12,Art,Computer Science,0,0.37456124294969984,0,False
+367,Male,1434.2,3.49,Art,Engineering,1,0.6991834086326114,1,False
+690,Male,1183.1,2.2,Soccer,Computer Science,0,0.477644445242383,0,True
+305,Female,866.6,3.05,Dance,Computer Science,1,0.23974845304079306,0,False
+676,Male,997.7,3.4,Gaming,Engineering,0,0.4598022552926216,0,True
+177,Female,1388.2,3.73,Dance,Humanities,1,0.5275244442574405,1,True
+489,Female,1405.3,3.2,Gaming,Humanities,1,0.5298889662354795,1,True
+87,Male,1361.1,2.88,Soccer,Engineering,0,0.7274248396687977,1,False
+514,Male,1332.4,2.59,Art,Biology,1,0.2949606276409722,0,False
+477,Male,1134.4,3.01,Gaming,Engineering,1,0.5131087761904225,1,True
+773,Female,1283.2,3.56,Dance,Humanities,0,0.40446260606429885,0,True
+589,Male,1145.4,3.69,Dance,Computer Science,0,0.5743635731854974,1,True
+191,Male,1156.7,3.25,Art,Engineering,1,0.4202021220841335,0,True
+260,Male,1415.7,3.12,Gaming,Computer Science,1,0.766522628335686,1,False
+208,Male,952.0,2.39,Gaming,Engineering,1,0.260878174158105,0,False
+53,Male,1140.9,3.17,Gaming,Engineering,0,0.5471702240731813,1,True
+874,Female,1443.8,3.5,Gaming,Humanities,0,0.6155138493956407,1,False
+764,Female,1488.3,3.54,Art,Biology,1,0.5893991819348601,1,True
+122,Male,1388.9,2.76,Soccer,Engineering,1,0.7303054049929371,1,False
+99,Female,1187.8,3.32,Art,Biology,1,0.2948036352666507,0,False
+206,Male,1181.6,2.91,Soccer,Engineering,1,0.5888423125764346,1,True
+924,Female,1072.6,2.48,Art,Humanities,0,0.09897559636771013,0,False
+971,Male,1235.2,2.43,Gaming,Engineering,0,0.5006320281948443,1,True
+726,Male,1027.5,3.83,Dance,Humanities,0,0.24743404490005114,0,False
+511,Male,1136.4,3.01,Dance,Engineering,0,0.4342638107683771,0,True
+396,Female,1600.0,3.58,Art,Engineering,1,0.817844841460113,1,False
+657,Male,969.8,3.38,Gaming,Engineering,1,0.43158799998244995,0,True
+175,Male,1150.7,3.05,Soccer,Computer Science,0,0.5980224010275004,1,True
+27,Male,1250.5,4.0,Dance,Engineering,0,0.6999151386822969,1,False
+495,Female,1529.6,2.74,Soccer,Biology,1,0.6846322721347525,1,False
+562,Male,1168.6,3.26,Gaming,Humanities,0,0.3347990880058357,0,False
+247,Male,1144.8,2.93,Soccer,Biology,1,0.3846166877614061,0,False
+480,Female,1600.0,2.79,Art,Computer Science,1,0.7292908430304935,1,False
+212,Male,1479.3,3.77,Gaming,Engineering,1,0.861563352067326,1,False
+5,Female,1136.6,3.44,Soccer,Computer Science,1,0.6509673559320078,1,False
+809,Male,1021.9,3.68,Soccer,Computer Science,1,0.5944052030320981,1,True
+900,Female,1144.0,3.81,Soccer,Humanities,0,0.4560489162487028,0,True
+443,Female,1091.5,3.02,Dance,Biology,0,0.24419888727688038,0,False
+306,Male,1192.9,3.4,Gaming,Computer Science,0,0.6430009142948185,1,False
+262,Female,1032.6,3.88,Art,Biology,0,0.2627906717426905,0,False
+627,Male,1170.2,2.72,Art,Engineering,0,0.3431114778677941,0,False
+988,Male,1373.8,4.0,Dance,Engineering,1,0.7839867010758901,1,False
+357,Male,1149.7,2.97,Gaming,Biology,0,0.34695343454734573,0,False
+302,Female,957.6,3.29,Dance,Humanities,0,0.14854886121321836,0,False
+612,Female,1193.0,3.49,Dance,Engineering,0,0.5692902333650751,1,True
+803,Female,1171.9,3.07,Gaming,Humanities,1,0.3079990226333395,0,False
+942,Male,1086.1,3.12,Art,Computer Science,0,0.3502890366058402,0,False
+29,Male,1367.7,3.37,Gaming,Engineering,0,0.7584894729355476,1,False
+174,Male,1459.6,2.97,Art,Engineering,1,0.6377620489655087,1,False
+481,Male,1180.6,3.45,Soccer,Humanities,1,0.42547027491331013,0,True
+389,Male,1409.7,3.62,Art,Biology,1,0.5340381153099177,1,True
+491,Female,1080.6,2.9,Gaming,Biology,0,0.28294425758052083,0,False
+611,Female,1462.5,3.23,Soccer,Biology,1,0.7072518918436109,1,False
+92,Male,1030.6,3.0,Soccer,Engineering,0,0.4704162767793917,0,True
+451,Male,1028.9,3.12,Dance,Engineering,0,0.3607865198637052,0,False
+126,Female,994.8,2.7,Art,Computer Science,0,0.22390062440805014,0,False
+927,Female,1174.8,2.76,Dance,Biology,0,0.26590579076119353,0,False
+79,Male,1228.8,3.68,Gaming,Computer Science,1,0.7141762496687986,1,False
+810,Female,1531.0,3.05,Dance,Computer Science,0,0.7735565442812458,1,False
+929,Male,1009.0,2.8,Gaming,Engineering,1,0.36674789591973594,0,False
+732,Male,1194.8,3.18,Soccer,Engineering,1,0.6452048143130564,1,False
+938,Female,1193.3,2.88,Art,Computer Science,1,0.4004532763148922,0,True
+730,Female,1092.9,3.2,Art,Computer Science,0,0.3689694890627764,0,False
+879,Female,1600.0,2.72,Dance,Biology,1,0.6179640489533398,1,False
+251,Male,1197.6,2.18,Art,Engineering,0,0.28206911368394766,0,False
+888,Female,1041.1,3.35,Art,Humanities,1,0.15387429283294873,0,False
+405,Female,847.0,3.52,Gaming,Biology,0,0.20951713171852512,0,False
+608,Female,1565.8,2.74,Dance,Biology,0,0.5920530336384141,1,True
+620,Male,1262.6,3.1,Soccer,Computer Science,1,0.6971945778665533,1,False
+785,Female,1352.3,4.0,Art,Computer Science,1,0.7233248016608242,1,False
+349,Female,1111.3,2.39,Art,Humanities,1,0.1058627329279539,0,False
+505,Male,1058.8,3.14,Art,Engineering,1,0.3205949052430126,0,False
+965,Male,1038.7,4.0,Gaming,Biology,0,0.42557376989636636,0,True
+80,Male,1050.0,2.48,Gaming,Engineering,0,0.34838605746292906,0,False
+18,Male,1433.9,3.04,Gaming,Computer Science,1,0.7680443459976796,1,False

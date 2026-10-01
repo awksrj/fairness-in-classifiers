@@ -1,0 +1,1001 @@
+ID,Gender,SAT,GPA,Hobby,Major,Admission
+1,Female,1012.8,3.54,Art,Engineering,1
+2,Female,1143.1,3.19,Dance,Biology,1
+3,Female,1402.9,3.41,Gaming,Biology,1
+4,Female,1191.0,3.12,Dance,Humanities,1
+5,Female,1136.6,3.44,Soccer,Computer Science,1
+6,Female,1126.8,2.97,Dance,Biology,0
+7,Male,1048.8,2.83,Gaming,Computer Science,1
+8,Female,1297.8,2.9,Art,Biology,0
+9,Female,1240.2,3.51,Soccer,Humanities,1
+10,Female,1142.5,2.99,Dance,Engineering,0
+11,Female,1374.3,2.44,Art,Biology,0
+12,Female,1342.8,3.04,Dance,Computer Science,0
+13,Female,996.0,2.79,Dance,Computer Science,0
+14,Female,1228.5,3.48,Dance,Humanities,0
+15,Male,1131.3,2.66,Gaming,Engineering,0
+16,Male,1280.4,3.5,Soccer,Engineering,1
+17,Male,939.5,2.6,Art,Humanities,0
+18,Male,1433.9,3.04,Gaming,Computer Science,1
+19,Male,1139.0,3.58,Soccer,Engineering,1
+20,Male,939.7,3.23,Gaming,Computer Science,1
+21,Female,1156.9,2.74,Dance,Engineering,0
+22,Male,1264.2,3.86,Gaming,Engineering,0
+23,Female,952.2,3.49,Soccer,Humanities,0
+24,Female,1350.9,4.0,Dance,Humanities,0
+25,Male,1248.2,2.83,Gaming,Computer Science,1
+26,Female,1228.3,3.13,Dance,Engineering,1
+27,Male,1250.5,4.0,Dance,Engineering,0
+28,Male,1026.3,2.87,Soccer,Biology,1
+29,Male,1367.7,3.37,Gaming,Engineering,0
+30,Male,1118.1,2.65,Art,Biology,1
+31,Female,1178.6,3.33,Dance,Humanities,0
+32,Male,1277.2,3.89,Soccer,Humanities,1
+33,Male,1510.3,3.12,Soccer,Computer Science,0
+34,Male,1038.9,3.49,Art,Computer Science,0
+35,Male,1453.3,3.24,Gaming,Engineering,1
+36,Female,980.6,2.8,Art,Humanities,0
+37,Male,1112.8,3.05,Gaming,Computer Science,0
+38,Male,1074.7,3.1,Gaming,Computer Science,1
+39,Male,1241.1,4.0,Gaming,Humanities,0
+40,Male,1093.7,3.34,Soccer,Biology,0
+41,Male,1170.7,2.72,Art,Computer Science,0
+42,Male,1402.3,3.16,Art,Computer Science,1
+43,Male,1002.6,4.0,Soccer,Engineering,1
+44,Male,1511.2,2.76,Soccer,Humanities,1
+45,Male,1175.9,2.58,Soccer,Engineering,1
+46,Male,1284.9,3.66,Soccer,Engineering,1
+47,Female,1070.1,3.34,Gaming,Computer Science,0
+48,Female,1269.5,2.86,Dance,Biology,0
+49,Female,1247.3,3.42,Soccer,Humanities,1
+50,Female,1115.1,3.32,Dance,Humanities,0
+51,Female,1227.5,3.86,Dance,Biology,1
+52,Male,1133.1,2.41,Gaming,Engineering,0
+53,Male,1140.9,3.17,Gaming,Engineering,0
+54,Female,1511.8,3.73,Dance,Humanities,0
+55,Female,1146.6,3.23,Dance,Humanities,0
+56,Female,1165.7,3.73,Soccer,Humanities,0
+57,Female,1187.9,2.67,Art,Biology,0
+58,Female,1017.5,3.21,Dance,Engineering,0
+59,Male,1408.0,3.47,Gaming,Computer Science,1
+60,Female,1490.9,2.27,Art,Engineering,0
+61,Male,1266.3,3.58,Dance,Computer Science,1
+62,Female,1242.2,3.32,Dance,Biology,0
+63,Male,1380.0,2.72,Soccer,Computer Science,1
+64,Female,1236.4,3.58,Dance,Humanities,1
+65,Female,1299.7,4.0,Dance,Engineering,1
+66,Female,1219.4,3.79,Art,Computer Science,1
+67,Male,1279.1,3.44,Dance,Engineering,0
+68,Female,1115.1,3.41,Gaming,Humanities,0
+69,Female,1336.8,3.3,Soccer,Computer Science,1
+70,Female,1347.7,3.02,Art,Engineering,0
+71,Male,841.2,2.62,Soccer,Biology,0
+72,Female,1148.7,3.29,Art,Humanities,0
+73,Male,1443.6,3.24,Art,Engineering,1
+74,Male,1135.6,3.56,Art,Computer Science,1
+75,Female,1285.4,3.14,Art,Computer Science,0
+76,Male,1007.4,2.91,Dance,Computer Science,0
+77,Male,1437.7,3.05,Gaming,Computer Science,1
+78,Female,1269.0,3.14,Dance,Biology,0
+79,Male,1228.8,3.68,Gaming,Computer Science,1
+80,Male,1050.0,2.48,Gaming,Engineering,0
+81,Male,1548.7,3.7,Gaming,Computer Science,1
+82,Female,1233.4,3.48,Art,Biology,0
+83,Female,1600.0,3.3,Art,Humanities,0
+84,Female,1169.3,2.85,Dance,Humanities,0
+85,Male,1319.8,3.69,Soccer,Engineering,1
+86,Male,1368.4,2.38,Soccer,Biology,0
+87,Male,1361.1,2.88,Soccer,Engineering,0
+88,Female,1278.3,2.95,Art,Humanities,0
+89,Female,1184.5,3.56,Dance,Computer Science,0
+90,Female,1493.2,2.76,Art,Humanities,0
+91,Male,1120.3,3.85,Dance,Computer Science,1
+92,Male,1030.6,3.0,Soccer,Engineering,0
+93,Male,1406.6,2.12,Soccer,Engineering,0
+94,Female,1167.7,3.09,Art,Engineering,0
+95,Female,1319.3,3.37,Dance,Humanities,1
+96,Female,1144.7,2.86,Art,Biology,0
+97,Female,1040.0,3.17,Art,Biology,0
+98,Male,1333.1,3.13,Art,Computer Science,1
+99,Female,1187.8,3.32,Art,Biology,1
+100,Female,1424.6,3.09,Art,Humanities,1
+101,Female,1007.0,3.52,Art,Biology,0
+102,Female,1490.0,2.65,Dance,Humanities,1
+103,Male,902.7,2.62,Dance,Computer Science,1
+104,Male,880.5,3.43,Dance,Engineering,0
+105,Female,1297.4,3.54,Soccer,Biology,1
+106,Male,1242.3,2.56,Dance,Biology,1
+107,Female,1243.5,2.92,Dance,Humanities,0
+108,Female,1088.5,3.41,Dance,Humanities,0
+109,Male,765.7,3.92,Art,Engineering,0
+110,Male,1148.5,3.11,Soccer,Engineering,1
+111,Female,1325.9,4.0,Dance,Biology,1
+112,Female,888.5,3.27,Art,Biology,0
+113,Male,1001.3,3.46,Soccer,Computer Science,0
+114,Male,1141.7,2.44,Dance,Computer Science,0
+115,Female,893.0,2.47,Art,Biology,0
+116,Female,1249.0,2.88,Gaming,Biology,0
+117,Female,1269.3,3.39,Art,Humanities,0
+118,Male,1425.3,2.97,Dance,Humanities,0
+119,Male,1342.3,3.87,Gaming,Humanities,1
+120,Male,1371.4,2.19,Soccer,Engineering,1
+121,Male,1035.3,3.11,Soccer,Engineering,1
+122,Male,1388.9,2.76,Soccer,Engineering,1
+123,Male,1197.5,3.52,Art,Engineering,1
+124,Male,918.6,3.51,Dance,Biology,0
+125,Male,789.5,2.53,Gaming,Engineering,0
+126,Female,994.8,2.7,Art,Computer Science,0
+127,Male,1250.1,3.27,Soccer,Engineering,1
+128,Female,1380.3,3.73,Dance,Humanities,1
+129,Female,1523.6,3.43,Art,Humanities,1
+130,Female,1017.3,4.0,Art,Biology,1
+131,Male,1315.1,3.4,Soccer,Computer Science,1
+132,Male,1261.3,2.4,Soccer,Engineering,0
+133,Female,1511.2,3.81,Art,Biology,1
+134,Male,1003.2,3.38,Gaming,Humanities,0
+135,Male,1523.6,3.6,Soccer,Biology,0
+136,Female,1005.2,3.13,Soccer,Biology,0
+137,Female,878.4,3.14,Dance,Computer Science,1
+138,Male,1047.9,2.71,Soccer,Computer Science,1
+139,Female,1176.2,2.64,Dance,Biology,0
+140,Female,1245.5,2.97,Soccer,Humanities,0
+141,Female,1249.2,2.69,Gaming,Computer Science,1
+142,Female,990.8,2.25,Art,Humanities,0
+143,Female,1418.6,2.0,Art,Biology,0
+144,Female,1064.5,2.8,Soccer,Computer Science,1
+145,Male,1542.9,3.22,Gaming,Biology,1
+146,Male,1600.0,3.58,Gaming,Computer Science,0
+147,Male,1363.5,3.21,Soccer,Engineering,1
+148,Female,851.3,3.5,Gaming,Engineering,1
+149,Female,1075.2,3.57,Gaming,Biology,0
+150,Male,1250.2,2.75,Art,Computer Science,0
+151,Male,1197.8,3.1,Dance,Biology,1
+152,Female,1000.0,2.67,Soccer,Engineering,0
+153,Female,749.7,2.43,Dance,Biology,0
+154,Male,1143.9,3.67,Gaming,Computer Science,1
+155,Male,1270.1,3.25,Dance,Engineering,0
+156,Male,1159.4,2.63,Soccer,Biology,0
+157,Male,1300.0,2.92,Gaming,Biology,0
+158,Male,1295.3,3.81,Soccer,Engineering,0
+159,Female,1097.1,3.13,Dance,Biology,0
+160,Male,1213.6,3.2,Art,Computer Science,0
+161,Male,1306.1,2.68,Soccer,Engineering,1
+162,Female,1359.6,3.42,Dance,Biology,1
+163,Male,672.5,3.37,Gaming,Computer Science,0
+164,Female,990.8,2.88,Dance,Humanities,0
+165,Female,1273.4,3.93,Art,Biology,0
+166,Male,954.3,3.08,Soccer,Computer Science,0
+167,Male,1180.9,3.3,Art,Engineering,0
+168,Male,1125.8,2.56,Gaming,Humanities,0
+169,Male,1332.4,3.37,Soccer,Computer Science,0
+170,Female,1308.8,3.06,Art,Biology,1
+171,Male,1436.7,3.15,Gaming,Computer Science,1
+172,Female,1348.3,3.17,Dance,Biology,0
+173,Male,1261.2,3.5,Gaming,Computer Science,1
+174,Male,1459.6,2.97,Art,Engineering,1
+175,Male,1150.7,3.05,Soccer,Computer Science,0
+176,Male,1310.9,2.25,Art,Computer Science,0
+177,Female,1388.2,3.73,Dance,Humanities,1
+178,Male,1199.7,3.64,Gaming,Humanities,0
+179,Male,1375.3,3.51,Gaming,Engineering,1
+180,Female,1297.7,2.77,Art,Humanities,1
+181,Female,1600.0,2.58,Gaming,Biology,1
+182,Male,1280.1,3.13,Soccer,Biology,0
+183,Male,1189.2,2.72,Dance,Biology,0
+184,Female,999.4,3.1,Art,Computer Science,0
+185,Male,1600.0,2.94,Art,Engineering,1
+186,Female,1211.1,3.25,Art,Engineering,1
+187,Male,1150.2,2.93,Gaming,Computer Science,0
+188,Female,1420.7,3.91,Art,Humanities,1
+189,Male,1310.5,3.47,Gaming,Engineering,0
+190,Female,1057.0,3.79,Dance,Humanities,1
+191,Male,1156.7,3.25,Art,Engineering,1
+192,Female,1022.0,3.4,Soccer,Biology,1
+193,Male,1151.4,4.0,Soccer,Engineering,0
+194,Female,1152.6,2.89,Soccer,Biology,1
+195,Male,1206.7,3.16,Dance,Computer Science,1
+196,Male,1102.2,3.21,Soccer,Engineering,1
+197,Male,1385.4,3.28,Art,Engineering,1
+198,Male,1219.9,3.2,Art,Biology,0
+199,Male,1134.6,3.09,Gaming,Computer Science,0
+200,Female,1524.3,3.01,Soccer,Biology,1
+201,Male,1020.4,3.16,Dance,Computer Science,0
+202,Male,1275.1,2.61,Gaming,Computer Science,1
+203,Male,952.3,3.06,Gaming,Engineering,1
+204,Male,1381.4,3.08,Soccer,Engineering,1
+205,Male,1033.2,3.87,Soccer,Engineering,1
+206,Male,1181.6,2.91,Soccer,Engineering,1
+207,Male,1253.6,3.6,Soccer,Biology,0
+208,Male,952.0,2.39,Gaming,Engineering,1
+209,Female,1432.3,3.38,Art,Engineering,1
+210,Male,1096.2,3.45,Dance,Engineering,0
+211,Male,1215.6,3.35,Gaming,Engineering,1
+212,Male,1479.3,3.77,Gaming,Engineering,1
+213,Male,1212.2,3.01,Art,Engineering,1
+214,Male,1473.0,2.84,Gaming,Computer Science,1
+215,Male,1193.1,3.98,Soccer,Computer Science,1
+216,Male,1119.5,3.18,Soccer,Biology,1
+217,Female,1306.8,3.89,Art,Biology,0
+218,Female,1204.2,2.93,Art,Biology,0
+219,Female,809.3,2.29,Dance,Engineering,0
+220,Male,1195.8,4.0,Gaming,Engineering,1
+221,Female,816.7,3.32,Art,Humanities,0
+222,Male,1026.2,3.22,Soccer,Engineering,0
+223,Male,1154.8,2.08,Gaming,Computer Science,0
+224,Male,987.6,3.56,Dance,Engineering,0
+225,Female,1163.5,3.37,Dance,Humanities,0
+226,Female,1196.0,2.5,Soccer,Biology,0
+227,Male,1177.7,3.53,Soccer,Engineering,0
+228,Male,1274.2,4.0,Soccer,Computer Science,0
+229,Female,1056.4,3.39,Soccer,Biology,1
+230,Female,1258.8,2.87,Dance,Humanities,0
+231,Female,967.5,3.36,Art,Computer Science,0
+232,Female,1126.1,3.09,Dance,Engineering,1
+233,Male,1131.7,3.37,Art,Engineering,0
+234,Female,927.3,3.57,Art,Humanities,0
+235,Female,1300.1,3.28,Art,Humanities,1
+236,Male,1142.9,3.13,Soccer,Engineering,1
+237,Male,1260.6,2.79,Art,Computer Science,1
+238,Male,863.2,4.0,Soccer,Computer Science,0
+239,Female,1412.9,3.05,Gaming,Engineering,1
+240,Female,1246.1,3.49,Dance,Computer Science,1
+241,Female,917.8,3.77,Dance,Engineering,0
+242,Male,1374.8,3.21,Dance,Computer Science,1
+243,Male,1232.6,2.79,Gaming,Engineering,0
+244,Male,1151.2,2.78,Soccer,Computer Science,1
+245,Female,1120.8,1.87,Dance,Biology,0
+246,Male,949.7,3.85,Gaming,Engineering,0
+247,Male,1144.8,2.93,Soccer,Biology,1
+248,Female,1464.1,3.15,Art,Biology,1
+249,Female,1373.3,2.87,Dance,Biology,1
+250,Female,968.4,2.59,Gaming,Humanities,0
+251,Male,1197.6,2.18,Art,Engineering,0
+252,Female,1129.7,3.97,Dance,Biology,1
+253,Female,1340.0,2.84,Dance,Biology,0
+254,Male,1089.1,3.19,Gaming,Computer Science,1
+255,Male,1258.1,2.68,Dance,Computer Science,1
+256,Male,1438.5,3.35,Gaming,Engineering,1
+257,Female,1559.6,3.26,Gaming,Biology,1
+258,Male,897.2,3.29,Art,Computer Science,0
+259,Female,971.8,1.96,Art,Humanities,0
+260,Male,1415.7,3.12,Gaming,Computer Science,1
+261,Female,1376.7,2.68,Gaming,Computer Science,1
+262,Female,1032.6,3.88,Art,Biology,0
+263,Male,1445.5,3.09,Soccer,Computer Science,1
+264,Male,917.9,2.87,Art,Computer Science,1
+265,Female,1068.9,3.55,Art,Computer Science,1
+266,Male,1053.0,2.68,Soccer,Engineering,1
+267,Male,1331.3,2.49,Soccer,Biology,0
+268,Male,938.4,2.63,Soccer,Computer Science,1
+269,Male,1414.1,3.13,Dance,Engineering,1
+270,Female,778.0,3.62,Gaming,Biology,0
+271,Female,1168.7,2.87,Art,Biology,0
+272,Female,1484.0,2.72,Art,Engineering,1
+273,Male,1143.8,3.81,Soccer,Biology,0
+274,Female,1251.9,3.09,Dance,Engineering,1
+275,Male,1600.0,2.4,Soccer,Engineering,1
+276,Female,1337.1,3.73,Art,Humanities,1
+277,Male,1267.5,3.69,Soccer,Computer Science,1
+278,Male,1251.0,3.69,Gaming,Computer Science,0
+279,Female,935.2,3.43,Art,Computer Science,0
+280,Male,1209.6,3.15,Gaming,Engineering,0
+281,Female,1429.1,3.44,Art,Biology,1
+282,Female,883.2,3.54,Art,Humanities,0
+283,Female,1523.7,3.74,Soccer,Biology,0
+284,Male,1074.2,3.16,Art,Biology,0
+285,Female,909.3,3.64,Art,Humanities,0
+286,Male,1015.4,2.96,Gaming,Engineering,0
+287,Female,1244.6,3.14,Art,Engineering,1
+288,Male,951.2,2.96,Soccer,Computer Science,1
+289,Male,887.2,3.29,Art,Computer Science,0
+290,Female,1242.6,4.0,Dance,Biology,1
+291,Female,1095.4,2.18,Dance,Engineering,1
+292,Female,1094.9,2.96,Gaming,Computer Science,0
+293,Male,1080.7,4.0,Soccer,Engineering,0
+294,Female,1213.2,3.22,Art,Biology,0
+295,Female,1107.0,3.61,Dance,Computer Science,1
+296,Male,1130.0,3.86,Dance,Engineering,0
+297,Female,1096.1,3.34,Dance,Computer Science,1
+298,Female,1081.9,2.95,Dance,Biology,0
+299,Female,1014.5,3.23,Art,Humanities,0
+300,Male,1010.7,3.14,Soccer,Engineering,0
+301,Female,1118.8,3.23,Dance,Biology,0
+302,Female,957.6,3.29,Dance,Humanities,0
+303,Female,761.5,2.76,Dance,Biology,1
+304,Male,1254.3,3.66,Soccer,Engineering,1
+305,Female,866.6,3.05,Dance,Computer Science,1
+306,Male,1192.9,3.4,Gaming,Computer Science,0
+307,Male,1285.9,3.2,Dance,Biology,0
+308,Male,1249.3,3.2,Soccer,Computer Science,0
+309,Female,1287.1,3.08,Art,Humanities,0
+310,Female,1041.7,3.5,Dance,Humanities,1
+311,Female,1334.5,3.23,Dance,Biology,0
+312,Female,1239.5,3.08,Art,Biology,0
+313,Male,1358.2,2.53,Gaming,Engineering,0
+314,Female,1130.8,3.5,Gaming,Humanities,0
+315,Male,1285.5,2.89,Soccer,Biology,1
+316,Female,1318.0,2.71,Soccer,Humanities,1
+317,Male,1162.4,3.51,Gaming,Engineering,1
+318,Female,1089.1,2.66,Art,Biology,0
+319,Male,1456.6,2.47,Soccer,Engineering,1
+320,Male,838.6,3.32,Gaming,Biology,1
+321,Female,1384.4,2.85,Dance,Computer Science,0
+322,Male,920.8,3.4,Soccer,Biology,1
+323,Male,1308.5,3.14,Art,Humanities,1
+324,Female,1115.4,3.4,Art,Biology,0
+325,Female,1414.3,1.83,Dance,Biology,0
+326,Female,1003.1,3.66,Art,Biology,0
+327,Male,1095.0,2.74,Soccer,Engineering,0
+328,Male,1044.6,3.78,Soccer,Biology,1
+329,Female,1078.1,2.84,Art,Computer Science,0
+330,Female,1131.7,2.39,Art,Biology,0
+331,Male,1210.2,3.31,Soccer,Biology,1
+332,Female,1363.5,2.66,Art,Engineering,1
+333,Male,1151.2,3.09,Gaming,Engineering,1
+334,Male,1122.5,3.56,Gaming,Engineering,1
+335,Female,958.7,3.55,Gaming,Engineering,0
+336,Male,1230.7,2.95,Soccer,Computer Science,1
+337,Male,1235.7,2.85,Gaming,Engineering,0
+338,Female,1241.7,3.63,Art,Computer Science,0
+339,Female,1104.5,4.0,Soccer,Biology,1
+340,Male,947.1,3.71,Soccer,Computer Science,0
+341,Male,972.4,4.0,Gaming,Engineering,1
+342,Female,1228.7,3.19,Soccer,Biology,1
+343,Female,1057.8,3.26,Dance,Humanities,0
+344,Male,731.7,3.29,Gaming,Humanities,0
+345,Male,1128.6,3.25,Soccer,Computer Science,1
+346,Female,1253.0,3.62,Dance,Humanities,0
+347,Male,1021.0,3.5,Soccer,Humanities,0
+348,Male,979.6,3.72,Soccer,Computer Science,1
+349,Female,1111.3,2.39,Art,Humanities,1
+350,Male,1249.1,3.37,Gaming,Engineering,1
+351,Male,1295.5,3.11,Soccer,Engineering,1
+352,Male,1210.2,2.62,Soccer,Engineering,1
+353,Male,1273.3,3.37,Soccer,Biology,0
+354,Female,1182.8,2.99,Dance,Humanities,0
+355,Female,1223.7,3.57,Art,Humanities,0
+356,Female,874.5,3.89,Art,Engineering,0
+357,Male,1149.7,2.97,Gaming,Biology,0
+358,Male,1270.3,3.42,Gaming,Engineering,1
+359,Male,1211.3,3.25,Art,Computer Science,1
+360,Female,1054.4,3.23,Dance,Computer Science,0
+361,Female,1276.0,3.68,Dance,Humanities,1
+362,Female,1056.2,3.04,Dance,Computer Science,1
+363,Female,1182.9,3.05,Gaming,Biology,1
+364,Male,1030.3,3.62,Soccer,Computer Science,1
+365,Female,1047.6,2.72,Art,Computer Science,0
+366,Female,1321.9,2.87,Gaming,Engineering,0
+367,Male,1434.2,3.49,Art,Engineering,1
+368,Female,1067.1,2.92,Dance,Biology,0
+369,Male,1260.3,3.22,Gaming,Engineering,1
+370,Female,1581.8,3.31,Soccer,Humanities,0
+371,Female,1178.1,2.99,Dance,Biology,0
+372,Male,1020.2,3.22,Soccer,Engineering,1
+373,Female,1161.3,2.83,Dance,Humanities,0
+374,Female,1394.6,3.07,Art,Humanities,0
+375,Male,1342.3,3.64,Gaming,Engineering,1
+376,Male,1202.0,3.16,Gaming,Biology,0
+377,Female,1215.5,2.84,Art,Engineering,0
+378,Male,1593.5,3.32,Gaming,Engineering,1
+379,Female,1033.8,2.73,Art,Humanities,0
+380,Male,1421.3,2.84,Gaming,Engineering,1
+381,Male,915.2,2.86,Soccer,Computer Science,1
+382,Female,1321.5,2.13,Dance,Biology,0
+383,Male,1395.2,3.45,Art,Engineering,1
+384,Male,1286.0,3.56,Soccer,Biology,1
+385,Female,1274.9,2.71,Dance,Engineering,0
+386,Female,969.9,4.0,Dance,Biology,0
+387,Male,1398.9,3.32,Gaming,Computer Science,0
+388,Male,1374.8,2.49,Soccer,Engineering,0
+389,Male,1409.7,3.62,Art,Biology,1
+390,Male,1111.8,2.8,Soccer,Computer Science,0
+391,Female,1548.4,3.21,Art,Computer Science,0
+392,Male,1446.4,3.23,Gaming,Computer Science,1
+393,Male,1600.0,3.08,Gaming,Engineering,1
+394,Male,771.0,3.43,Art,Computer Science,0
+395,Female,1037.6,2.5,Gaming,Engineering,0
+396,Female,1600.0,3.58,Art,Engineering,1
+397,Female,830.1,3.12,Dance,Humanities,0
+398,Male,1470.4,3.54,Gaming,Biology,1
+399,Female,986.7,2.22,Dance,Computer Science,0
+400,Female,1482.6,2.75,Dance,Biology,0
+401,Male,1401.5,3.03,Soccer,Humanities,1
+402,Male,1179.3,3.92,Art,Computer Science,1
+403,Female,1207.7,3.16,Art,Humanities,0
+404,Male,1323.1,2.92,Gaming,Computer Science,1
+405,Female,847.0,3.52,Gaming,Biology,0
+406,Female,1120.5,3.12,Dance,Biology,0
+407,Female,1250.6,2.89,Dance,Biology,0
+408,Male,1252.3,3.04,Art,Computer Science,1
+409,Female,893.5,2.55,Art,Biology,0
+410,Male,1310.9,2.15,Gaming,Computer Science,0
+411,Male,1218.2,3.71,Soccer,Humanities,1
+412,Male,926.0,3.66,Dance,Engineering,1
+413,Female,1023.0,3.32,Soccer,Humanities,1
+414,Female,1025.1,3.53,Art,Biology,0
+415,Female,1338.4,3.57,Dance,Engineering,0
+416,Female,1126.1,3.24,Dance,Biology,0
+417,Male,973.3,2.61,Soccer,Engineering,0
+418,Male,1120.7,3.8,Soccer,Computer Science,0
+419,Male,1259.0,3.46,Dance,Computer Science,1
+420,Female,1337.2,3.07,Art,Biology,1
+421,Male,1181.9,3.15,Gaming,Computer Science,1
+422,Male,1241.4,3.2,Art,Engineering,1
+423,Male,1396.3,4.0,Gaming,Humanities,1
+424,Female,1299.6,3.31,Dance,Engineering,0
+425,Female,1473.9,3.36,Dance,Biology,1
+426,Male,1238.9,3.56,Soccer,Computer Science,0
+427,Female,1299.9,2.43,Art,Humanities,0
+428,Female,1161.5,2.39,Soccer,Computer Science,0
+429,Male,1394.8,2.96,Gaming,Computer Science,0
+430,Female,1168.5,3.67,Art,Engineering,0
+431,Female,1286.4,3.38,Art,Biology,1
+432,Male,1143.9,4.0,Soccer,Computer Science,1
+433,Female,1121.9,2.26,Art,Computer Science,0
+434,Male,1458.3,3.87,Art,Biology,0
+435,Male,1404.0,2.78,Gaming,Computer Science,1
+436,Male,1600.0,3.49,Gaming,Biology,1
+437,Female,1053.2,2.77,Gaming,Humanities,0
+438,Female,1184.3,3.35,Art,Computer Science,1
+439,Female,1255.7,3.48,Art,Humanities,0
+440,Female,910.5,2.83,Art,Biology,0
+441,Male,1102.1,3.84,Soccer,Engineering,1
+442,Male,1021.3,3.11,Soccer,Computer Science,0
+443,Female,1091.5,3.02,Dance,Biology,0
+444,Male,1061.2,3.95,Soccer,Biology,0
+445,Male,1100.6,3.13,Gaming,Engineering,0
+446,Male,1216.2,2.76,Soccer,Biology,1
+447,Female,1323.8,3.74,Soccer,Biology,0
+448,Female,1306.0,3.16,Art,Humanities,0
+449,Female,1495.3,2.97,Dance,Humanities,0
+450,Male,1229.3,3.78,Soccer,Computer Science,0
+451,Male,1028.9,3.12,Dance,Engineering,0
+452,Male,942.8,3.01,Soccer,Engineering,1
+453,Male,1082.0,3.51,Soccer,Engineering,1
+454,Male,1265.8,3.9,Gaming,Engineering,0
+455,Male,1160.1,3.65,Dance,Engineering,1
+456,Male,1156.8,3.78,Gaming,Biology,1
+457,Female,1134.2,3.83,Art,Humanities,0
+458,Female,1044.8,3.59,Dance,Engineering,1
+459,Male,1168.3,3.38,Art,Engineering,0
+460,Female,1327.2,3.17,Dance,Biology,0
+461,Male,1229.1,3.67,Soccer,Computer Science,1
+462,Male,1232.3,2.94,Gaming,Humanities,0
+463,Female,972.4,2.67,Art,Humanities,0
+464,Female,1127.5,2.78,Art,Humanities,0
+465,Male,1316.6,2.83,Soccer,Engineering,0
+466,Male,1115.4,3.12,Art,Computer Science,0
+467,Male,908.6,3.25,Gaming,Computer Science,1
+468,Male,1335.0,3.59,Art,Humanities,0
+469,Male,1102.4,2.89,Gaming,Engineering,0
+470,Male,1374.2,3.46,Gaming,Computer Science,1
+471,Male,1300.1,2.99,Gaming,Computer Science,1
+472,Male,1290.2,3.68,Soccer,Biology,1
+473,Male,1096.2,3.0,Soccer,Biology,1
+474,Female,1398.1,3.5,Dance,Biology,1
+475,Male,1153.3,3.64,Gaming,Computer Science,0
+476,Male,1510.7,2.34,Soccer,Engineering,1
+477,Male,1134.4,3.01,Gaming,Engineering,1
+478,Male,1340.4,3.54,Gaming,Engineering,1
+479,Female,1014.4,3.2,Gaming,Humanities,0
+480,Female,1600.0,2.79,Art,Computer Science,1
+481,Male,1180.6,3.45,Soccer,Humanities,1
+482,Female,1397.3,3.46,Art,Biology,0
+483,Male,1088.3,3.55,Gaming,Engineering,1
+484,Female,1243.8,2.83,Art,Engineering,0
+485,Female,1039.8,2.54,Art,Biology,0
+486,Female,973.7,3.43,Dance,Humanities,0
+487,Male,1078.0,2.72,Soccer,Engineering,1
+488,Male,1103.3,2.83,Soccer,Computer Science,0
+489,Female,1405.3,3.2,Gaming,Humanities,1
+490,Female,1140.2,2.83,Gaming,Engineering,0
+491,Female,1080.6,2.9,Gaming,Biology,0
+492,Female,1345.5,2.95,Dance,Computer Science,0
+493,Female,1207.4,3.71,Dance,Humanities,1
+494,Female,1539.8,3.2,Dance,Computer Science,1
+495,Female,1529.6,2.74,Soccer,Biology,1
+496,Female,1084.0,2.9,Dance,Biology,0
+497,Male,1143.9,2.86,Art,Engineering,1
+498,Female,706.9,2.4,Soccer,Humanities,0
+499,Male,1427.7,3.21,Soccer,Biology,0
+500,Female,1276.0,3.53,Art,Engineering,1
+501,Male,1140.9,2.07,Gaming,Computer Science,0
+502,Male,1233.2,4.0,Gaming,Engineering,1
+503,Male,1205.1,2.48,Art,Computer Science,1
+504,Male,1385.0,3.18,Soccer,Humanities,0
+505,Male,1058.8,3.14,Art,Engineering,1
+506,Male,1164.8,3.32,Gaming,Computer Science,1
+507,Male,1485.5,3.3,Gaming,Computer Science,1
+508,Female,1600.0,2.98,Dance,Computer Science,0
+509,Male,1139.9,3.76,Dance,Computer Science,0
+510,Female,1116.7,2.31,Dance,Computer Science,0
+511,Male,1136.4,3.01,Dance,Engineering,0
+512,Male,1390.3,3.37,Art,Humanities,0
+513,Female,1470.2,3.38,Soccer,Biology,1
+514,Male,1332.4,2.59,Art,Biology,1
+515,Female,978.7,3.36,Gaming,Humanities,0
+516,Male,1049.7,3.17,Gaming,Computer Science,0
+517,Female,1236.2,3.03,Gaming,Biology,0
+518,Male,1379.3,2.78,Gaming,Engineering,1
+519,Female,1120.5,2.99,Soccer,Engineering,1
+520,Female,1600.0,3.28,Art,Biology,1
+521,Male,1573.8,2.82,Dance,Computer Science,1
+522,Female,1428.2,2.81,Soccer,Biology,1
+523,Male,1116.0,2.7,Soccer,Engineering,1
+524,Male,990.9,2.79,Soccer,Computer Science,0
+525,Female,1368.7,2.85,Soccer,Biology,1
+526,Female,1562.4,3.47,Art,Engineering,0
+527,Male,1187.3,3.22,Art,Engineering,1
+528,Male,1242.3,3.75,Gaming,Biology,1
+529,Male,1080.0,3.13,Gaming,Computer Science,0
+530,Male,1323.8,3.45,Soccer,Humanities,0
+531,Female,1069.3,3.37,Art,Biology,0
+532,Male,1105.2,2.69,Soccer,Computer Science,1
+533,Female,1165.9,4.0,Soccer,Computer Science,1
+534,Male,1350.4,3.15,Gaming,Engineering,0
+535,Female,1275.3,3.14,Dance,Biology,0
+536,Female,937.7,2.89,Gaming,Humanities,0
+537,Male,1083.9,3.35,Gaming,Humanities,0
+538,Male,1391.6,3.51,Dance,Biology,1
+539,Female,1355.4,3.28,Dance,Engineering,0
+540,Male,1071.8,3.45,Soccer,Engineering,0
+541,Male,1135.7,2.59,Soccer,Engineering,1
+542,Female,1179.2,3.68,Dance,Biology,1
+543,Female,1096.7,3.72,Dance,Biology,0
+544,Female,1286.3,3.34,Soccer,Computer Science,0
+545,Female,1326.7,2.74,Dance,Biology,1
+546,Female,1600.0,3.65,Art,Humanities,1
+547,Male,1245.9,2.93,Soccer,Engineering,0
+548,Female,1310.8,2.55,Soccer,Biology,0
+549,Female,1112.7,3.45,Dance,Computer Science,0
+550,Female,1400.5,2.82,Dance,Engineering,0
+551,Female,1048.1,2.59,Art,Biology,0
+552,Female,947.1,3.63,Dance,Engineering,0
+553,Male,1042.2,3.05,Art,Engineering,0
+554,Male,1111.7,3.38,Soccer,Computer Science,0
+555,Female,1394.7,3.05,Dance,Engineering,1
+556,Male,1373.0,2.25,Soccer,Computer Science,1
+557,Female,1099.7,3.79,Dance,Biology,0
+558,Male,1126.9,2.74,Gaming,Engineering,0
+559,Female,1095.1,3.48,Gaming,Biology,0
+560,Male,1299.0,4.0,Art,Engineering,0
+561,Female,1287.2,3.52,Art,Biology,1
+562,Male,1168.6,3.26,Gaming,Humanities,0
+563,Female,1404.3,3.55,Gaming,Humanities,0
+564,Male,1363.8,3.33,Art,Biology,0
+565,Female,1203.4,3.18,Gaming,Humanities,0
+566,Female,1155.6,3.42,Gaming,Biology,1
+567,Male,1503.8,3.55,Soccer,Computer Science,1
+568,Male,1297.1,2.79,Art,Humanities,1
+569,Female,1137.9,1.98,Gaming,Engineering,0
+570,Male,1229.8,3.17,Gaming,Engineering,1
+571,Male,969.3,3.21,Soccer,Computer Science,1
+572,Male,923.5,2.54,Gaming,Engineering,0
+573,Female,1149.7,2.77,Art,Engineering,1
+574,Male,1079.6,3.17,Soccer,Biology,1
+575,Female,1108.0,2.72,Art,Biology,0
+576,Female,1308.2,2.79,Dance,Humanities,1
+577,Female,1348.5,2.88,Art,Humanities,0
+578,Female,1500.8,3.42,Dance,Biology,1
+579,Female,836.0,3.26,Art,Humanities,0
+580,Male,1370.0,3.26,Gaming,Engineering,1
+581,Female,1023.9,4.0,Art,Humanities,0
+582,Female,1342.7,2.48,Art,Humanities,0
+583,Female,1294.7,2.91,Art,Biology,1
+584,Male,1208.4,3.23,Gaming,Engineering,1
+585,Female,1376.1,2.96,Soccer,Biology,0
+586,Female,1329.8,3.86,Dance,Computer Science,1
+587,Female,1339.0,3.25,Gaming,Biology,1
+588,Male,1571.5,3.81,Art,Biology,1
+589,Male,1145.4,3.69,Dance,Computer Science,0
+590,Female,1159.9,3.71,Dance,Humanities,0
+591,Female,1435.8,3.59,Dance,Humanities,1
+592,Female,1157.3,2.65,Dance,Biology,0
+593,Female,1192.5,3.65,Soccer,Humanities,1
+594,Male,1438.0,3.49,Dance,Engineering,1
+595,Female,1280.6,3.45,Dance,Humanities,0
+596,Male,1393.6,3.36,Gaming,Engineering,1
+597,Female,1318.2,2.87,Soccer,Engineering,1
+598,Male,1482.3,3.37,Soccer,Computer Science,0
+599,Female,1166.4,3.79,Gaming,Biology,1
+600,Female,1139.7,3.59,Art,Humanities,0
+601,Female,1272.8,3.08,Gaming,Engineering,0
+602,Female,1302.3,2.87,Soccer,Humanities,0
+603,Female,1154.5,3.1,Soccer,Humanities,0
+604,Male,1220.4,2.63,Soccer,Engineering,0
+605,Male,985.7,3.42,Soccer,Engineering,1
+606,Male,1187.0,2.93,Soccer,Humanities,1
+607,Female,959.2,3.49,Gaming,Engineering,0
+608,Female,1565.8,2.74,Dance,Biology,0
+609,Female,1442.5,4.0,Dance,Engineering,1
+610,Male,1097.2,2.4,Soccer,Engineering,0
+611,Female,1462.5,3.23,Soccer,Biology,1
+612,Female,1193.0,3.49,Dance,Engineering,0
+613,Male,1223.9,2.37,Gaming,Computer Science,0
+614,Male,1152.2,3.35,Gaming,Computer Science,0
+615,Female,1564.0,3.22,Art,Humanities,0
+616,Female,1414.3,2.91,Dance,Biology,1
+617,Male,1440.5,3.31,Art,Engineering,1
+618,Female,1083.5,3.08,Dance,Biology,0
+619,Female,1209.3,3.84,Art,Biology,0
+620,Male,1262.6,3.1,Soccer,Computer Science,1
+621,Female,1272.4,3.01,Soccer,Biology,0
+622,Female,1001.9,2.42,Dance,Computer Science,1
+623,Male,852.1,2.59,Soccer,Engineering,0
+624,Female,1214.3,2.92,Art,Biology,1
+625,Female,1248.2,2.65,Art,Biology,0
+626,Male,1184.6,2.33,Soccer,Biology,1
+627,Male,1170.2,2.72,Art,Engineering,0
+628,Female,1059.4,3.44,Soccer,Computer Science,0
+629,Female,1149.9,3.41,Dance,Computer Science,0
+630,Male,1045.1,3.55,Soccer,Engineering,0
+631,Female,1325.4,3.62,Dance,Engineering,1
+632,Male,1313.8,3.33,Gaming,Engineering,1
+633,Female,1132.5,3.23,Dance,Engineering,1
+634,Female,1114.7,2.49,Art,Biology,0
+635,Female,1134.0,2.45,Dance,Biology,0
+636,Male,1086.3,3.12,Gaming,Computer Science,0
+637,Female,1173.9,2.63,Art,Computer Science,0
+638,Male,1254.5,3.47,Soccer,Computer Science,1
+639,Female,1367.0,3.54,Soccer,Biology,1
+640,Female,1396.3,2.78,Dance,Biology,0
+641,Female,1267.5,2.37,Gaming,Engineering,0
+642,Female,1140.7,3.22,Art,Engineering,0
+643,Female,1132.5,3.52,Dance,Humanities,0
+644,Female,1010.0,3.58,Dance,Engineering,0
+645,Female,1254.2,3.64,Dance,Biology,0
+646,Male,1272.6,3.32,Dance,Computer Science,1
+647,Male,1123.7,2.87,Art,Computer Science,1
+648,Female,1372.6,3.75,Dance,Biology,1
+649,Female,1353.8,3.3,Dance,Computer Science,0
+650,Male,1168.0,2.85,Gaming,Computer Science,0
+651,Male,1142.6,3.12,Gaming,Computer Science,1
+652,Male,1215.5,2.15,Gaming,Computer Science,0
+653,Male,1306.4,2.87,Gaming,Engineering,0
+654,Male,993.2,3.2,Soccer,Computer Science,1
+655,Female,986.9,3.94,Dance,Humanities,1
+656,Male,1256.7,3.45,Soccer,Computer Science,1
+657,Male,969.8,3.38,Gaming,Engineering,1
+658,Male,1112.0,3.83,Soccer,Engineering,1
+659,Male,1023.4,3.01,Soccer,Computer Science,1
+660,Male,778.8,2.72,Soccer,Computer Science,1
+661,Female,1085.4,3.34,Soccer,Biology,0
+662,Male,908.7,4.0,Soccer,Engineering,0
+663,Male,1443.5,4.0,Gaming,Engineering,1
+664,Male,1143.1,2.91,Soccer,Engineering,0
+665,Male,1001.7,3.5,Soccer,Computer Science,1
+666,Female,941.8,2.86,Dance,Humanities,0
+667,Female,1271.4,3.29,Dance,Humanities,0
+668,Male,1220.7,3.06,Soccer,Engineering,1
+669,Female,1190.9,3.79,Dance,Humanities,0
+670,Female,1600.0,3.17,Gaming,Computer Science,1
+671,Female,1063.2,3.64,Dance,Biology,1
+672,Female,1293.1,3.0,Dance,Humanities,1
+673,Female,1088.8,2.73,Gaming,Humanities,0
+674,Female,1079.7,3.33,Dance,Biology,0
+675,Male,1258.9,3.08,Gaming,Computer Science,1
+676,Male,997.7,3.4,Gaming,Engineering,0
+677,Female,1145.1,2.89,Soccer,Computer Science,0
+678,Female,1083.1,2.64,Gaming,Biology,0
+679,Female,1457.4,3.06,Dance,Humanities,1
+680,Male,1265.1,3.32,Gaming,Computer Science,0
+681,Female,1471.6,3.64,Art,Biology,0
+682,Male,955.8,2.51,Soccer,Computer Science,1
+683,Female,1169.6,3.29,Art,Computer Science,0
+684,Male,1069.6,3.27,Gaming,Computer Science,1
+685,Female,1216.6,3.13,Dance,Humanities,0
+686,Female,1170.3,2.95,Soccer,Biology,0
+687,Male,1271.8,2.96,Gaming,Computer Science,1
+688,Female,1355.8,3.52,Dance,Engineering,0
+689,Male,1082.6,2.92,Gaming,Engineering,1
+690,Male,1183.1,2.2,Soccer,Computer Science,0
+691,Male,981.2,2.83,Art,Engineering,1
+692,Female,1399.4,3.59,Art,Humanities,0
+693,Male,1052.7,2.43,Art,Biology,0
+694,Male,1062.2,2.67,Soccer,Computer Science,0
+695,Female,1278.5,3.1,Gaming,Humanities,0
+696,Male,1136.7,3.55,Soccer,Computer Science,0
+697,Female,1300.6,3.45,Dance,Computer Science,0
+698,Male,1402.8,3.64,Gaming,Engineering,1
+699,Male,1020.0,3.36,Soccer,Engineering,1
+700,Male,1161.5,2.76,Gaming,Engineering,0
+701,Male,1010.5,2.93,Gaming,Biology,0
+702,Male,1173.7,4.0,Gaming,Biology,0
+703,Male,1217.0,4.0,Soccer,Biology,1
+704,Male,1267.7,2.82,Soccer,Engineering,1
+705,Female,1389.4,3.41,Dance,Humanities,0
+706,Female,1159.4,3.34,Art,Humanities,0
+707,Male,1391.1,3.47,Dance,Humanities,1
+708,Female,1007.2,2.97,Soccer,Biology,1
+709,Male,1416.8,3.24,Soccer,Computer Science,1
+710,Female,1271.9,3.03,Gaming,Humanities,0
+711,Male,1303.7,2.75,Gaming,Biology,1
+712,Male,832.6,3.34,Gaming,Computer Science,1
+713,Female,1450.1,3.08,Gaming,Biology,1
+714,Female,1206.2,3.34,Art,Computer Science,1
+715,Male,1448.4,3.74,Dance,Biology,1
+716,Female,1297.7,4.0,Soccer,Computer Science,1
+717,Male,1551.0,2.9,Art,Engineering,0
+718,Male,1453.4,3.75,Soccer,Engineering,1
+719,Female,1315.3,3.21,Gaming,Biology,0
+720,Female,1064.6,3.3,Art,Biology,1
+721,Male,1463.8,3.08,Soccer,Biology,1
+722,Female,1376.6,2.42,Art,Computer Science,0
+723,Female,1401.4,2.99,Dance,Biology,0
+724,Male,1261.7,3.72,Gaming,Engineering,1
+725,Male,1531.9,3.38,Art,Engineering,1
+726,Male,1027.5,3.83,Dance,Humanities,0
+727,Male,1504.6,2.88,Soccer,Biology,1
+728,Female,916.7,2.81,Gaming,Humanities,0
+729,Female,1081.3,3.95,Soccer,Computer Science,1
+730,Female,1092.9,3.2,Art,Computer Science,0
+731,Male,772.0,3.35,Soccer,Biology,0
+732,Male,1194.8,3.18,Soccer,Engineering,1
+733,Male,1071.1,3.25,Soccer,Engineering,1
+734,Male,1388.1,3.41,Dance,Engineering,1
+735,Female,1475.1,3.66,Dance,Biology,1
+736,Male,1205.2,3.09,Soccer,Computer Science,1
+737,Male,1099.1,3.36,Dance,Humanities,1
+738,Female,1164.1,2.68,Gaming,Biology,0
+739,Female,1351.9,3.04,Dance,Humanities,0
+740,Male,1133.5,2.93,Art,Engineering,1
+741,Male,1175.3,3.53,Gaming,Computer Science,1
+742,Male,1357.6,2.21,Gaming,Computer Science,0
+743,Male,1550.1,3.34,Dance,Engineering,1
+744,Female,1149.0,3.47,Art,Engineering,0
+745,Male,1006.4,2.78,Art,Biology,0
+746,Male,1017.5,2.63,Soccer,Engineering,0
+747,Male,1185.2,3.77,Gaming,Computer Science,0
+748,Male,1457.1,3.14,Gaming,Engineering,1
+749,Male,1422.5,3.34,Dance,Biology,0
+750,Female,944.1,2.89,Gaming,Biology,0
+751,Male,1166.0,2.53,Gaming,Engineering,1
+752,Female,1232.5,4.0,Soccer,Engineering,0
+753,Male,1026.8,3.35,Art,Engineering,1
+754,Male,1006.0,3.39,Soccer,Computer Science,1
+755,Female,1155.6,2.6,Soccer,Humanities,1
+756,Male,1151.8,2.94,Soccer,Computer Science,0
+757,Male,1088.9,3.64,Soccer,Biology,1
+758,Male,1052.9,3.33,Dance,Engineering,0
+759,Male,1292.3,3.32,Dance,Humanities,0
+760,Female,1192.5,3.39,Dance,Humanities,0
+761,Male,1010.9,3.39,Soccer,Humanities,0
+762,Male,1025.4,3.35,Gaming,Humanities,1
+763,Female,1110.0,2.53,Art,Computer Science,0
+764,Female,1488.3,3.54,Art,Biology,1
+765,Male,1169.5,3.77,Gaming,Computer Science,1
+766,Female,1171.3,3.07,Gaming,Biology,1
+767,Male,1257.3,3.14,Soccer,Computer Science,1
+768,Male,1234.0,2.88,Soccer,Computer Science,1
+769,Male,930.2,3.2,Gaming,Engineering,0
+770,Female,1324.3,3.68,Dance,Biology,0
+771,Female,1203.8,1.99,Art,Humanities,0
+772,Female,1078.0,2.89,Art,Biology,0
+773,Female,1283.2,3.56,Dance,Humanities,0
+774,Male,1067.9,3.34,Soccer,Computer Science,1
+775,Male,1232.2,3.49,Art,Humanities,1
+776,Female,1495.6,3.34,Dance,Humanities,0
+777,Male,761.1,2.99,Art,Engineering,0
+778,Male,1431.9,3.07,Dance,Humanities,1
+779,Male,1117.5,3.58,Soccer,Computer Science,1
+780,Male,1265.4,3.54,Gaming,Humanities,1
+781,Male,1540.3,3.53,Gaming,Engineering,1
+782,Female,1234.1,2.72,Soccer,Biology,1
+783,Male,1558.4,3.01,Soccer,Humanities,1
+784,Male,1019.5,4.0,Gaming,Engineering,1
+785,Female,1352.3,4.0,Art,Computer Science,1
+786,Male,1014.0,2.41,Art,Engineering,0
+787,Female,984.1,1.79,Art,Biology,0
+788,Female,1089.6,3.6,Dance,Biology,1
+789,Female,1062.3,3.28,Art,Biology,0
+790,Female,1119.3,3.27,Soccer,Biology,0
+791,Male,1029.9,2.47,Soccer,Computer Science,0
+792,Female,1359.4,3.79,Art,Humanities,1
+793,Female,1181.6,3.0,Dance,Engineering,0
+794,Female,1268.8,3.56,Gaming,Biology,0
+795,Female,1087.8,2.92,Soccer,Biology,1
+796,Female,1164.9,2.93,Dance,Biology,0
+797,Female,1178.2,3.36,Dance,Engineering,0
+798,Female,1342.7,2.98,Art,Computer Science,1
+799,Female,1276.0,3.04,Gaming,Biology,1
+800,Female,1399.7,2.8,Art,Humanities,0
+801,Female,1251.7,3.27,Gaming,Computer Science,0
+802,Male,1244.5,3.71,Soccer,Engineering,1
+803,Female,1171.9,3.07,Gaming,Humanities,1
+804,Male,1059.4,3.6,Gaming,Computer Science,1
+805,Male,1181.1,3.16,Soccer,Biology,0
+806,Male,1010.9,2.41,Gaming,Computer Science,0
+807,Male,1521.3,2.93,Gaming,Computer Science,1
+808,Female,1232.3,4.0,Gaming,Biology,0
+809,Male,1021.9,3.68,Soccer,Computer Science,1
+810,Female,1531.0,3.05,Dance,Computer Science,0
+811,Male,964.9,3.17,Art,Biology,0
+812,Male,1256.4,3.23,Gaming,Computer Science,0
+813,Male,1304.3,2.42,Soccer,Computer Science,1
+814,Female,1041.5,3.36,Art,Humanities,1
+815,Male,1204.5,3.44,Art,Computer Science,1
+816,Male,1555.9,2.93,Soccer,Biology,1
+817,Female,1196.9,3.18,Gaming,Biology,1
+818,Female,1304.5,2.58,Soccer,Biology,1
+819,Female,1336.5,2.91,Art,Humanities,0
+820,Male,963.2,2.32,Art,Engineering,0
+821,Female,837.4,2.74,Art,Computer Science,0
+822,Male,923.5,2.69,Soccer,Engineering,0
+823,Male,1067.2,3.21,Soccer,Engineering,0
+824,Female,1157.8,3.75,Gaming,Humanities,1
+825,Female,912.7,3.47,Gaming,Biology,0
+826,Female,1038.1,3.05,Gaming,Engineering,1
+827,Female,956.7,2.66,Gaming,Computer Science,0
+828,Male,1294.1,2.71,Gaming,Biology,1
+829,Male,1279.4,3.04,Gaming,Computer Science,1
+830,Male,1300.7,2.54,Gaming,Engineering,1
+831,Female,1310.6,3.76,Dance,Humanities,1
+832,Female,1204.6,3.28,Dance,Biology,0
+833,Female,1107.7,3.16,Art,Engineering,0
+834,Female,1415.4,3.25,Gaming,Humanities,0
+835,Male,1139.3,3.57,Soccer,Engineering,0
+836,Male,1415.3,3.35,Art,Engineering,1
+837,Female,1511.7,3.44,Dance,Biology,1
+838,Female,1325.9,2.77,Gaming,Biology,0
+839,Female,1171.0,4.0,Dance,Computer Science,1
+840,Male,1403.4,2.83,Gaming,Humanities,1
+841,Male,1214.4,2.24,Gaming,Engineering,1
+842,Male,1245.8,2.98,Gaming,Biology,1
+843,Female,1140.1,3.35,Art,Biology,0
+844,Female,1119.7,2.92,Dance,Humanities,1
+845,Female,1305.6,3.29,Dance,Humanities,0
+846,Male,1270.2,3.32,Dance,Engineering,1
+847,Female,1098.5,2.9,Art,Biology,0
+848,Male,1209.0,2.8,Soccer,Computer Science,1
+849,Female,1242.2,2.48,Gaming,Humanities,1
+850,Male,1340.6,2.63,Gaming,Biology,1
+851,Male,1124.5,2.78,Dance,Computer Science,0
+852,Male,1396.8,3.02,Dance,Biology,1
+853,Female,1169.4,3.57,Soccer,Biology,0
+854,Male,1190.5,3.66,Gaming,Computer Science,1
+855,Female,997.7,3.2,Dance,Biology,0
+856,Male,1447.0,3.61,Gaming,Computer Science,1
+857,Male,1226.7,3.69,Soccer,Engineering,1
+858,Female,1129.8,3.23,Soccer,Humanities,0
+859,Female,1160.7,3.07,Art,Biology,0
+860,Female,1419.6,2.98,Art,Humanities,0
+861,Male,1207.0,3.39,Soccer,Engineering,1
+862,Male,1085.1,3.24,Soccer,Humanities,0
+863,Male,1067.9,2.55,Art,Humanities,0
+864,Male,1199.8,3.43,Soccer,Engineering,1
+865,Female,1016.0,2.81,Dance,Biology,0
+866,Male,1053.0,3.6,Dance,Humanities,0
+867,Male,1157.7,3.2,Soccer,Engineering,1
+868,Female,1164.0,2.88,Dance,Computer Science,0
+869,Female,1185.1,2.97,Gaming,Humanities,0
+870,Male,1214.6,2.78,Dance,Biology,0
+871,Male,1141.8,3.39,Gaming,Computer Science,1
+872,Female,683.5,2.98,Dance,Humanities,0
+873,Male,1063.1,3.2,Dance,Biology,0
+874,Female,1443.8,3.5,Gaming,Humanities,0
+875,Male,818.9,3.18,Soccer,Engineering,1
+876,Female,1074.2,2.35,Dance,Biology,0
+877,Female,1183.4,3.01,Art,Computer Science,0
+878,Male,1450.8,2.42,Gaming,Engineering,1
+879,Female,1600.0,2.72,Dance,Biology,1
+880,Male,1219.8,2.73,Soccer,Engineering,0
+881,Male,1454.3,3.62,Gaming,Biology,1
+882,Male,1245.4,2.98,Art,Computer Science,1
+883,Female,935.5,2.75,Gaming,Biology,0
+884,Female,1101.1,3.0,Dance,Biology,0
+885,Female,1359.2,3.47,Soccer,Humanities,0
+886,Female,1381.9,3.37,Art,Humanities,1
+887,Female,1356.2,2.49,Dance,Biology,1
+888,Female,1041.1,3.35,Art,Humanities,1
+889,Male,1342.0,3.57,Soccer,Engineering,0
+890,Male,1389.8,3.35,Gaming,Engineering,1
+891,Male,1466.1,3.55,Gaming,Biology,1
+892,Male,1243.0,3.44,Soccer,Computer Science,0
+893,Female,1181.1,2.52,Dance,Biology,0
+894,Male,1399.5,2.92,Soccer,Computer Science,1
+895,Male,1115.2,3.0,Gaming,Engineering,1
+896,Male,1363.5,3.33,Dance,Engineering,1
+897,Female,1518.7,3.42,Art,Engineering,1
+898,Male,1463.1,2.87,Soccer,Humanities,1
+899,Female,1054.3,3.64,Dance,Biology,0
+900,Female,1144.0,3.81,Soccer,Humanities,0
+901,Female,1168.1,3.19,Art,Humanities,0
+902,Female,1245.6,3.51,Dance,Biology,0
+903,Male,1493.0,4.0,Soccer,Humanities,1
+904,Male,1271.8,3.34,Soccer,Computer Science,1
+905,Male,1360.6,3.34,Dance,Biology,1
+906,Female,836.7,3.16,Soccer,Humanities,0
+907,Female,1194.6,2.95,Dance,Biology,1
+908,Male,1199.1,3.59,Soccer,Biology,0
+909,Female,1109.7,3.26,Art,Biology,0
+910,Male,1101.0,4.0,Soccer,Humanities,1
+911,Male,1188.2,2.92,Gaming,Engineering,0
+912,Female,1449.9,3.06,Dance,Humanities,1
+913,Male,1079.7,3.37,Soccer,Engineering,0
+914,Male,1032.5,3.08,Gaming,Computer Science,0
+915,Male,1050.9,3.33,Art,Engineering,0
+916,Female,1411.6,2.41,Art,Biology,0
+917,Female,1200.9,3.31,Dance,Biology,0
+918,Female,1291.0,3.55,Dance,Biology,0
+919,Female,904.2,3.48,Dance,Computer Science,0
+920,Male,984.1,3.12,Art,Engineering,0
+921,Female,1217.8,3.65,Dance,Engineering,1
+922,Female,1383.4,2.78,Gaming,Computer Science,0
+923,Male,1287.1,3.2,Art,Engineering,1
+924,Female,1072.6,2.48,Art,Humanities,0
+925,Male,1043.3,3.99,Art,Computer Science,1
+926,Male,1429.4,3.48,Dance,Computer Science,1
+927,Female,1174.8,2.76,Dance,Biology,0
+928,Female,1366.4,3.07,Art,Biology,0
+929,Male,1009.0,2.8,Gaming,Engineering,1
+930,Male,1104.1,3.21,Soccer,Computer Science,0
+931,Female,1073.3,2.76,Dance,Biology,0
+932,Male,1102.0,3.55,Dance,Engineering,1
+933,Male,1061.7,2.98,Soccer,Engineering,1
+934,Male,1029.8,2.97,Gaming,Engineering,1
+935,Female,1202.2,2.51,Soccer,Biology,0
+936,Female,1456.6,3.57,Dance,Computer Science,1
+937,Female,1352.8,3.13,Art,Biology,0
+938,Female,1193.3,2.88,Art,Computer Science,1
+939,Female,992.2,2.8,Art,Biology,0
+940,Female,1266.8,3.47,Dance,Humanities,0
+941,Female,1377.7,3.35,Dance,Biology,0
+942,Male,1086.1,3.12,Art,Computer Science,0
+943,Female,958.2,3.93,Gaming,Humanities,1
+944,Male,1291.6,3.8,Soccer,Biology,1
+945,Male,1138.2,2.5,Soccer,Computer Science,1
+946,Female,1114.6,2.82,Gaming,Computer Science,1
+947,Female,1010.1,2.95,Art,Engineering,0
+948,Female,1021.3,3.23,Art,Biology,1
+949,Male,1257.7,3.12,Gaming,Biology,1
+950,Female,1441.6,3.48,Art,Biology,0
+951,Female,1218.3,3.3,Art,Engineering,0
+952,Female,1461.2,3.55,Soccer,Biology,0
+953,Female,1285.1,4.0,Gaming,Biology,1
+954,Male,1421.2,3.38,Gaming,Humanities,1
+955,Male,1545.3,2.3,Soccer,Computer Science,0
+956,Female,777.0,3.4,Gaming,Engineering,0
+957,Female,864.9,3.51,Art,Humanities,0
+958,Female,1047.7,2.48,Art,Humanities,0
+959,Male,1308.2,2.95,Soccer,Engineering,0
+960,Female,1230.4,3.37,Art,Biology,0
+961,Female,1182.8,3.34,Dance,Humanities,0
+962,Female,1269.5,3.21,Dance,Engineering,1
+963,Female,1268.9,3.3,Dance,Computer Science,0
+964,Male,1042.5,2.75,Gaming,Engineering,0
+965,Male,1038.7,4.0,Gaming,Biology,0
+966,Male,1596.2,3.31,Gaming,Engineering,1
+967,Female,1406.0,3.47,Dance,Biology,1
+968,Female,1277.5,3.28,Art,Computer Science,0
+969,Female,1600.0,2.52,Soccer,Computer Science,1
+970,Female,1285.0,3.27,Dance,Computer Science,1
+971,Male,1235.2,2.43,Gaming,Engineering,0
+972,Female,1205.8,3.82,Dance,Computer Science,1
+973,Male,1319.0,2.4,Gaming,Engineering,0
+974,Male,1317.7,3.43,Dance,Humanities,1
+975,Male,1176.6,3.37,Dance,Engineering,0
+976,Female,1242.9,2.82,Soccer,Humanities,0
+977,Female,1302.0,2.93,Art,Engineering,0
+978,Female,1497.4,3.15,Dance,Biology,1
+979,Male,1399.9,4.0,Gaming,Engineering,1
+980,Female,1092.1,3.07,Art,Computer Science,0
+981,Male,1518.4,3.44,Gaming,Engineering,1
+982,Female,1205.1,3.0,Art,Computer Science,0
+983,Male,1155.1,3.29,Soccer,Engineering,0
+984,Female,1326.2,3.7,Gaming,Humanities,1
+985,Male,1098.8,2.75,Soccer,Computer Science,0
+986,Male,1338.8,3.01,Gaming,Computer Science,1
+987,Male,1131.1,2.6,Soccer,Engineering,0
+988,Male,1373.8,4.0,Dance,Engineering,1
+989,Female,1236.4,2.83,Dance,Humanities,1
+990,Male,1193.8,2.56,Soccer,Computer Science,1
+991,Female,1459.0,3.53,Art,Biology,1
+992,Male,1381.6,3.68,Soccer,Computer Science,0
+993,Female,1340.3,3.19,Dance,Humanities,1
+994,Female,1013.3,3.42,Soccer,Biology,0
+995,Female,1282.9,4.0,Art,Humanities,0
+996,Female,969.7,3.7,Gaming,Humanities,1
+997,Female,1403.8,3.04,Gaming,Humanities,1
+998,Female,1266.3,4.0,Art,Computer Science,1
+999,Male,1559.7,3.73,Art,Humanities,1
+1000,Male,1278.1,3.4,Soccer,Biology,0

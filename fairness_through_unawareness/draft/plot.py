@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 # CONFIGURATION
 # ============================================================
 
-BEFORE_CSV_PATH = "fairness_through_unawareness\\csv\\before_ftu.csv"
-AFTER_CSV_PATH = "fairness_through_unawareness\\csv\\after_ftu.csv"
+BEFORE_CSV_PATH = "fairness_through_unawareness\\draft\\csv\\before_ftu.csv"
+AFTER_CSV_PATH = "fairness_through_unawareness\\draft\\csv\\after_ftu.csv"
 
-BEFORE_PNG_PATH = "fairness_through_unawareness\\png\\before_ftu.png"
-AFTER_PNG_PATH = "fairness_through_unawareness\\png\\after_ftu.png"
+BEFORE_PNG_PATH = "fairness_through_unawareness\\draft\\png\\before_ftu.png"
+AFTER_PNG_PATH = "fairness_through_unawareness\\draft\\png\\after_ftu.png"
 
 THRESHOLD = 0.5
 
@@ -23,7 +23,7 @@ JITTER = 0.07
 
 FIGURE_WIDTH = 7
 FIGURE_HEIGHT = 7
-POINT_SIZE = 70
+POINT_SIZE = 30
 POINT_ALPHA = 0.8
 
 Y_MIN = 0.0
