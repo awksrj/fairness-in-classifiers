@@ -1,0 +1,5 @@
+Feature,Coefficient
+Intercept,-8.08862519937395
+sat__SAT,0.006597526351163583
+categorical__Dept_Humanities,-0.71832178568265
+categorical__Gender_Female,-0.6819381517872317
